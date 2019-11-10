@@ -4,7 +4,7 @@ class ClickStart extends Scene {
   constructor () {
     super({ key: 'ClickStart' })
   }
-  
+
   create () {
     this.add.bitmapText(20, 20, 'font', 'click screen to enable keyboard and audio')
 

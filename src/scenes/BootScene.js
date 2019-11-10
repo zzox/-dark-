@@ -10,8 +10,10 @@ class BootScene extends Scene {
 
     this.load.bitmapFont('font', 'assets/fonts/manaspace.png', 'assets/fonts/manaspace.fnt')
     this.load.json('animations', 'assets/data/animations.json')
+    this.load.json('worlds', 'assets/data/worlds.json')
+    this.load.json('projectiles', 'assets/data/projectiles.json')
   }
-  
+
   create () {
     window.addEventListener('resize', () => {
       this.resize()
@@ -22,8 +24,8 @@ class BootScene extends Scene {
 
   resize () {
     const maxMulti = 4
-    const w = 480
-    const h = 270
+    const w = 320
+    const h = 180
     const availW = window.innerWidth
     const availH = window.innerHeight
     // - 20 for padding

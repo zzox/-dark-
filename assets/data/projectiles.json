@@ -1,0 +1,31 @@
+{
+	"ball": {
+		"velocityX": 275,
+		"velocityY": -300,
+		"damage": 10,
+		"blowback": 150,
+		"ammoInc": 9,
+		"maxHoldTime": 300,
+		"fireTime": 150,
+		"spawnChildren": false,
+		"bounce": false,
+		"explodeGround": true,
+		"activeExplosion": false,
+		"fadeOut": true
+	},
+	"bomb": {
+		"held": true,
+		"name": "bomb",
+		"velocityX": 275,
+		"velocityY": -300,
+		"blowback": 150,
+		"ammoInc": 9,
+		"firePerSec": 1,
+		"gravity": true,
+		"spawnChildren": true,
+		"childrenPattern": "plus",
+		"bounce": true,
+		"activeExplosion": true,
+		"explodeTimer": 1500
+	}
+}
