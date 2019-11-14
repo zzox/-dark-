@@ -45,6 +45,7 @@ class Projectile extends GameObjects.Sprite {
     explodeTimer,
     activeExplosion
   }) {
+    // TODO: remove damage,
     this.exploded = false
     this.hit = false
     this.hitTime = 0
@@ -104,9 +105,12 @@ class Projectile extends GameObjects.Sprite {
       this.scene.physics.world.collide(this, this.scene.groundLayer, this.dragGround.bind(this))
     }
 
+    // TODO: Remove this, and we check if it collides with anything, besides
+    // collision with itself.  In that case, we need to add a timer so that we don't hit ourselves
+    // on the first couple frames.
     if (this.from === 'player') {
       if (!(this.exploded && !this.activeExplosion)) {
-        this.scene.physics.world.overlap(this, this.scene.enemyGroup, this.hitEnemy.bind(this))
+        this.scene.physics.world.overlap(this, this.scene.enemies, this.hitEnemy.bind(this))
       }
     } else if (this.from === 'enemy') {
       this.scene.physics.world.overlap(this, this.scene.player, this.hitEnemy.bind(this))
@@ -170,30 +174,10 @@ class Projectile extends GameObjects.Sprite {
   }
 
   hitEnemy (projectile, enemy) {
-    const dir = this.prevState.dir === 'left' ? -1 : 1
-
-    // because they can die in the middle of this function execution
-    const enemyAlive = enemy.alive
-
-    if (enemyAlive) {
-      if (enemy.body.blocked.down && enemy.body.velocity.y === 0) {
-        enemy.body.setVelocityX(projectile.blowback * dir)
-      } else {
-        enemy.body.setVelocity(projectile.blowback * dir, projectile.blowback * -1)
-      }
+    if (enemy.state.hurt === false && enemy.alive === true) {
+      enemy.hit()
+      this.explode()
     }
-
-    if (enemy.state.hurt === false && enemyAlive === true) {
-      enemy.hurt(projectile.damage)
-    }
-
-    this.hit = true
-    if (this.spawnChildren) {
-      this.spawnChildrens()
-      this.disappear()
-    }
-
-    this.explode()
   }
 
   disappear () {
@@ -207,15 +191,16 @@ class Projectile extends GameObjects.Sprite {
 
   explode () {
     this.exploded = true
+
     if (this.spawnChildren) {
       this.spawnChildrens()
       this.disappear()
-    } else {
-      this.hit = true
-      this.anims.play(`${this.name}-explode`, true)
-      this.body.setVelocity(0, 0)
-      this.body.allowGravity = false
     }
+    
+    this.anims.play(`${this.name}-explode`, true)
+    this.body.setVelocity(0, 0)
+    this.body.allowGravity = false
+    this.hit = true
   }
 
   spawnChildrens () {

@@ -1,7 +1,9 @@
 import { GameObjects } from 'phaser'
 import {
   hurtFlash,
-  quickHurtFlash
+  quickHurtFlash,
+  deadFlash,
+  quickDeadFlash
 } from './helpers'
 
 const CLEAR_TINT = 0xFFFFFF
@@ -23,7 +25,7 @@ class HoppingPest extends GameObjects.Sprite {
     this.body.maxVelocity.set(500)
     // this.body.drag.set(1000, 0)
 
-    this.body.setCollideWorldBounds(true)
+    // this.body.setCollideWorldBounds(true)
     this.body.setBounce(0.5, 0)
 
     this.minDecisionTime = 500
@@ -42,40 +44,54 @@ class HoppingPest extends GameObjects.Sprite {
     }
 
     this.alive = true
-    this.hitPoints = 50
-    this.damage = 30
     this.blowback = 200
+    this.lightness = 100
+    this.lightnessInc = 50
     this.randomAttackChance = 0.025
-    this.hurtTime = 500
-
-    this.animation = 'bounce'
 
     this.state = {
       move: 'idle',
       hurt: false,
       hurtTimer: 0,
-      hurtStep: 0
+      hurtTime: 500,
+      hurtStep: 0,
+      deadTimer: 0,
+      deadTime: 666,
+      deadStep: 0
     }
 
     this.prevState = {
       moveState: 'idle'
     }
+
+    this.isActive = false
   }
 
   update (delta) {
-    // TODO:
-    if (this.room !== this.scene.currentRoom) {
-      return
-    }
+    if (this.isActive) {
+      // states
+      if (this.decisionTimer > this.decisionTime) {
+        this.makeDecision()
+      } else {
+        this.decisionTimer += delta
+      }
 
-    // states
-    if (this.decisionTimer > this.decisionTime) {
-      this.makeDecision()
-    } else {
-      this.decisionTimer += delta
-    }
+      if (this.alive) {
+        this.updateStates(delta)
+      } else {
+        if (this.state.deadTimer > 0) {
+          this.state.deadTimer -= delta
+          this.state.deadStep++
 
-    this.updateStates(delta)
+          // LATER: quickflash for different times?
+          const tint = this.state.deadStep % deadFlash.length
+          this.setTint(deadFlash[tint])
+        } else {
+          this.destroy()
+          return
+        }
+      }
+    }
 
     if (!this.body.velocity.x && !this.body.velocity.y) {
       this.animation = 'idle'
@@ -101,6 +117,7 @@ class HoppingPest extends GameObjects.Sprite {
         const tint = this.state.hurtStep % hurtFlash.length
         this.setTint(hurtFlash[tint])
       } else if (this.state.hurtTimer < 0) {
+        this.body.setBounce(0.5, 0)
         this.state.hurt = false
         this.state.hurtStep = 0
         this.setTint(CLEAR_TINT)
@@ -135,6 +152,7 @@ class HoppingPest extends GameObjects.Sprite {
     }
   }
 
+  // TODO: make parent
   makeDecision () {
     // if player is close, attack.
     // if not, then just chill
@@ -155,22 +173,30 @@ class HoppingPest extends GameObjects.Sprite {
     return Math.random() * (this.maxDecisionTime - this.minDecisionTime) + this.minDecisionTime
   }
 
-  hurt (damage) {
-    // TODO: queue hitpoints numbers here
-    this.hitPoints = this.hitPoints - damage
-    this.state.hurt = true
-    this.state.hurtTimer = this.hurtTime
+  hit () {
+    console.log('we hit!')
+    this.alive = false
+    this.body.allowGravity = false
+    this.body.setVelocity(0, 0)
+    this.anims.pause()
+    this.state.deadTimer = this.state.deadTime
+  }
 
-    if (this.hitPoints <= 0) {
-      this.alive = false
-      this.scene.enemiesDestroyed++
-      // TODO: fade out or something
-      this.destroy()
-    }
+  hurt (hurtMutli = 1) {
+    this.state.hurt = true
+    this.state.hurtTimer = this.state.hurtTime * hurtMutli
+    this.body.setBounce(0.66, 0.66)
+    this.lightness += this.lightnessInc
   }
 
   activate () {
-    this.active = true
+    this.body.setCollideWorldBounds(true)
+    this.isActive = true
+  }
+
+  deactivate () {
+    this.body.setCollideWorldBounds(false)
+    this.isActive = false
   }
 }
 

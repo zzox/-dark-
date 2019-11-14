@@ -11,50 +11,53 @@ const horizontalLine = (fromX, toX, y) => {
 }
 
 // TODO: seprate items from text, spacing, centering and sizing of background text
+
+const flatLine = [...horizontalLine(0, 39, 21)]
+
+const middlePlatform = [
+  ...horizontalLine(0, 9, 21),
+  ...horizontalLine(16, 24, 21),
+  ...horizontalLine(30, 39, 21)
+]
+
 export const the = {
-  items: [...horizontalLine(0, 38, 21)]
+  items: [...flatLine]
 }
 
 export const world = {
   enemies: [
     {
-      pos: { x: 16, y: 16 },
-      types: ['hopper-purple']
+      pos: { x: 20.5, y: 20 },
+      type: 'hopper-purple'
     }
   ],
-  items: [
-    ...horizontalLine(0, 8, 21),
-    ...horizontalLine(12, 16, 21),
-    ...horizontalLine(22, 38, 21)
-  ]
+  items: [...middlePlatform]
 }
 
 export const is = {
-  items: [
-    ...horizontalLine(0, 8, 21),
-    ...horizontalLine(12, 16, 21),
-    ...horizontalLine(22, 38, 21)
-  ]
+  enemies: [
+    {
+      pos: { x: 20.5, y: 20 },
+      type: 'hopper-purple'
+    },
+    {
+      pos: { x: 34.5, y: 20 },
+      type: 'hopper-purple'
+    }
+  ],
+  items: [...middlePlatform]
 }
 
 export const maybe = {
-  items: [
-    ...horizontalLine(0, 8, 21),
-    ...horizontalLine(12, 16, 21),
-    ...horizontalLine(22, 38, 21)
-  ]
+  items: [...middlePlatform]
 }
 
 export const surely = {
-  items: [
-    ...horizontalLine(0, 8, 21),
-    ...horizontalLine(12, 16, 21),
-    ...horizontalLine(22, 38, 21)
-  ]
+  items: [...middlePlatform]
 }
 
 export const ending = {
   items: [
-    ...horizontalLine(0, 38, 21)
+    ...horizontalLine(0, 39, 21)
   ]
 }

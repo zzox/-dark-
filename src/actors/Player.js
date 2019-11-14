@@ -2,10 +2,10 @@ import { GameObjects } from 'phaser'
 import Melee from '../gameobjects/Melee'
 import {
   hurtFlash,
-  quickHurtFlash
+  quickHurtFlash,
+  visibleFlash,
+  quickVisibleFlash
 } from './helpers'
-
-const CLEAR_TINT = 0xFFFFFF
 
 class Player extends GameObjects.Sprite {
   constructor ({ scene, x, y }) {
@@ -24,6 +24,7 @@ class Player extends GameObjects.Sprite {
 
     this.body.setCollideWorldBounds(true)
 
+    this.lives = 3
     this.jumps = 0
     this.maxJumps = 2
     this.jumpTime = 0
@@ -32,9 +33,6 @@ class Player extends GameObjects.Sprite {
     this.jumpVelocity = 200
 
     this.animation = 'stand'
-
-    this.alive = true
-    this.hitPoints = 100
 
     this.meleeName = 'wand'
     // this.meleeConfig = this.scene.cache.json.entries.entries.melees[this.meleeName]
@@ -49,16 +47,23 @@ class Player extends GameObjects.Sprite {
     this.projConfig = this.scene.cache.json.entries.entries.projectiles[this.projName]
     console.log(this.projConfig)
 
+    this.startingState()
+  }
+
+  startingState (killed = false) {
     this.state = {
       canRun: true,
       canRunTimer: 0,
       canJump: true,
       canJumpTimer: 0,
       hurt: false,
-      hurtTimer: 0,
-      hurtStep: 0,
-      healthIncTimer: 0,
-      healthIncTime: 1000,
+      resurrecting: false,
+      resurrectTimer: 0,
+      resurrectTime: 1000,
+      resurrectStep: 1000,
+      deadTimer: 0,
+      deadTime: 1000,
+      deadStep: 0,
       swinging: false,
       swingingTime: 0,
       shooting: false,
@@ -73,6 +78,17 @@ class Player extends GameObjects.Sprite {
       shoot: true,
       flipX: true,
       blockedDown: true
+    }
+
+    this.body.allowGravity = true
+    this.alive = true
+
+    this.clearTint()
+
+    if (killed) {
+      this.anims.resume()
+      this.state.resurrecting = true
+      this.state.resurrectTimer = this.state.resurrectTime
     }
   }
 
@@ -99,69 +115,88 @@ class Player extends GameObjects.Sprite {
       dash: keys.dash.timeDown
     }
 
-    let vel = 0
+    if (!this.alive) {
+      this.body.setAcceleration(0)
+      this.body.setVelocity(0)
 
-    if (input.melee && !this.prevState.melee) {
-      this.swing()
-    }
+      if (this.state.deadTimer > 0) {
+        this.state.deadTimer -= delta
+        this.state.deadStep++
 
-    if (input.shoot && !this.prevState.shoot) {
-      this.shoot()
-    }
-
-    this.updateStates(delta, input)
-
-    if (input.right) {
-      vel = 1
-    }
-
-    if (input.left) {
-      vel = -1
-    }
-
-    if (input.left && input.right) {
-      if (holds.right > holds.left) {
-        vel = 1
-      } else {
-        vel = -1
-      }
-    }
-
-    if (!input.jump) {
-      this.jumping = false
-      this.jumpTime = 0
-    }
-
-    if (this.body.blocked.down) {
-      this.jumpTime = 0
-      this.jumps = 0
-      this.jumping = false
-    }
-
-    if (!this.state.shooting && !this.state.postShooting &&
-      !(this.state.swinging && this.state.swingingTime < this.melee.swingDone)) {
-      if (((input.jump && !this.prevState.jump) &&
-        (this.jumps < this.maxJumps)) ||
-        (input.jump && this.jumping &&
-        this.jumpTime < this.jumpTimer &&
-        this.jumps <= this.maxJumps)) {
-        this.jumpTime += delta
-
-        if (input.jump && !this.prevState.jump) {
-          this.body.setVelocityY(-this.jumpVelocity)
-          this.jumping = true
-          this.jumps++
-        } else {
-          this.body.setVelocityY(-this.jumpVelocity / 1.5)
+        // LATER: quickflash for different times?
+        const tint = this.state.deadStep % hurtFlash.length
+        this.setTint(hurtFlash[tint])
+      } else if (this.state.deadTimer < 0) {
+        if (this.lives > 0) {
+          this.resurrect()
         }
       }
+    } else {
+      let vel = 0
+
+      if (input.melee && !this.prevState.melee) {
+        this.swing()
+      }
+
+      if (input.shoot && !this.prevState.shoot) {
+        this.shoot()
+      }
+
+      this.updateStates(delta, input)
+
+      if (input.right) {
+        vel = 1
+      }
+
+      if (input.left) {
+        vel = -1
+      }
+
+      if (input.left && input.right) {
+        if (holds.right > holds.left) {
+          vel = 1
+        } else {
+          vel = -1
+        }
+      }
+
+      if (!input.jump) {
+        this.jumping = false
+        this.jumpTime = 0
+      }
+
+      if (this.body.blocked.down) {
+        this.jumpTime = 0
+        this.jumps = 0
+        this.jumping = false
+      }
+
+      if (!this.state.shooting && !this.state.postShooting &&
+        !(this.state.swinging && this.state.swingingTime < this.melee.swingDone)) {
+        // TODO: combine these
+        if (((input.jump && !this.prevState.jump) &&
+          (this.jumps < this.maxJumps)) ||
+          (input.jump && this.jumping &&
+          this.jumpTime < this.jumpTimer &&
+          this.jumps <= this.maxJumps)) {
+          this.jumpTime += delta
+
+          if (input.jump && !this.prevState.jump) {
+            this.body.setVelocityY(-this.jumpVelocity)
+            this.jumping = true
+            this.jumps++
+          } else {
+            this.body.setVelocityY(-this.jumpVelocity / 1.5)
+          }
+        }
+      }
+
+      this.run(vel)
+
+      this.updateAnimations()
+
+      this.anims.play(`${this.name}-${this.animation}`, true)
     }
-
-    this.run(vel)
-
-    this.updateAnimations()
-
-    this.anims.play(`${this.name}-${this.animation}`, true)
 
     this.prevState = {
       jump: input.jump,
@@ -181,34 +216,18 @@ class Player extends GameObjects.Sprite {
       // this.scene.scene.start('BootScene')
     }
 
-    if (this.state.hurt) {
-      if (this.state.hurtTimer > 0) {
-        this.state.hurtTimer -= delta
-        this.state.hurtStep++
+    if (this.state.resurrecting) {
+      if (this.state.resurrectTimer > 0) {
+        this.state.resurrectTimer -= delta
+        this.state.resurrectStep++
 
         // LATER: quickflash for different times?
-        const tint = this.state.hurtStep % hurtFlash.length
-        this.setTint(hurtFlash[tint])
-      } else if (this.state.hurtTimer < 0) {
-        this.state.hurt = false
-        this.state.hurtStep = 0
-        this.setTint(CLEAR_TINT)
-        this.state.healthIncTimer = 0
-      }
-    }
-
-    // TODO: Remove this stuff?
-    if (!this.hurt && this.hitPoints !== 100) {
-      if (this.state.healthIncTimer < this.state.healthIncTime) {
-        let multi = 1
-        if (this.body.velocity.x === 0 && this.body.velocity.y === 0) {
-          multi = 3
-        }
-
-        this.state.healthIncTimer += (delta * multi)
-      } else {
-        this.hitPoints++
-        this.state.healthIncTimer = 0
+        const alpha = this.state.resurrectStep % visibleFlash.length
+        this.setVisible(visibleFlash[alpha])
+      } else if (this.state.resurrectTimer < 0) {
+        this.state.resurrecting = false
+        this.state.resurrectTimer = 0
+        this.setVisible(true)
       }
     }
 
@@ -365,10 +384,23 @@ class Player extends GameObjects.Sprite {
     }
   }
 
-  damage (amount) {
-    this.hitPoints -= amount
-    this.state.hurt = true
-    this.state.hurtTimer = 800
+  kill () {
+    console.log('i\'m dead')
+    this.alive = false
+    this.body.allowGravity = false
+    this.body.setVelocity(0, 0)
+    this.anims.pause()
+    this.state.deadTimer = this.state.deadTime
+    if (this.state.swinging) {
+      this.melee.cancel()
+    }
+    // TODO: check here for lives
+  }
+
+  resurrect () {
+    this.x = this.scene.roomLeft + 8
+    this.y = 156
+    this.startingState(true)
   }
 }
 

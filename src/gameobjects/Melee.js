@@ -16,8 +16,6 @@ class Melee extends GameObjects.Sprite {
     this.swingHigh = 200
     this.swingDone = 250
 
-    // TODO: config.possession || 'player'
-    this.possession = 'player'
     this.owner = owner
 
     this.swingingDir = null
@@ -53,11 +51,8 @@ class Melee extends GameObjects.Sprite {
       this.anims.play(`${this.name}-up`, true)
       this.swingingDir = 'up'
 
-      if (this.possession === 'player') {
-        this.scene.physics.world.overlap(this, this.scene.enemyGroup, this.hurtEnemy)
-      } else if (this.possession === 'opponent') {
-        this.scene.physics.world.overlap(this, this.scene.player, this.hurtPlayer)
-      }
+      this.scene.physics.world.overlap(this, this.scene.enemies, this.hitEnemy)
+      this.scene.physics.world.overlap(this, this.scene.projectiles, this.hitProj)
     } else if (holdTime > this.swingLow && holdTime <= this.swingHigh) {
       this.visible = true
       this.body.setSize(12, 13)
@@ -73,11 +68,8 @@ class Melee extends GameObjects.Sprite {
       this.anims.play(`${this.name}-swing`, true)
       this.swingingDir = 'down'
 
-      if (this.possession === 'player') {
-        this.scene.physics.world.overlap(this, this.scene.enemyGroup, this.hurtEnemy)
-      } else if (this.possession === 'opponent') {
-        this.scene.physics.world.overlap(this, this.scene.player, this.hurtPlayer)
-      }
+      this.scene.physics.world.overlap(this, this.scene.enemies, this.hitEnemy)
+      this.scene.physics.world.overlap(this, this.scene.projectiles, this.hitProj)
       if (!this.soundPlayed) {
         this.soundPlayed = true
         // this.scene.sound.playAudioSprite('sfx', 'sword-swing')
@@ -97,13 +89,8 @@ class Melee extends GameObjects.Sprite {
       this.anims.play(`${this.name}-down`, true)
       this.swingingDir = null
 
-      if (this.possession === 'player') {
-        this.scene.physics.world.overlap(this, this.scene.enemyGroup, this.hurtEnemy)
-      } else if (this.possession === 'enemy') {
-        // LATER: remove this if statement, make it all one.
-        this.scene.physics.world.overlap(this, this.scene.player, this.hurtPlayer)
-      }
-
+      this.scene.physics.world.overlap(this, this.scene.enemies, this.hitEnemy)
+      this.scene.physics.world.overlap(this, this.scene.projectiles, this.hitProj)
       // TODO: add all other layers.
       this.scene.physics.world.overlap(this, this.scene.groundLayer, this.cancelSwing)
     }
@@ -111,12 +98,12 @@ class Melee extends GameObjects.Sprite {
     return this.minimumSwingComplete
   }
 
-  hurtEnemy (melee, enemy) {
+  hitEnemy (melee, enemy) {
     const swingComplete = melee.minimumSwingComplete
-    if (!enemy.state.hurt) {
-      const damage = swingComplete ? melee.damage : melee.damage / 2
 
+    if (!enemy.state.hurt) {
       let dir = 0
+      let hurtMulti = 1
       if (melee.direction === 'left') {
         dir = -1
       } else if (melee.direction === 'right') {
@@ -126,21 +113,33 @@ class Melee extends GameObjects.Sprite {
         alert('shoouldn\'t be here')
       }
 
-      console.log(melee.blowback * dir)
+      let xVel, yVel
+      if (melee.swingingDir === 'up') {
+        xVel = (enemy.lightness + Math.abs(enemy.body.velocity.x)) * dir
+        yVel = enemy.body.velocity.y
+      } else if (melee.swingingDir === 'down') {
+        xVel = (enemy.lightness + Math.abs(enemy.body.velocity.x)) * dir
+        yVel = (enemy.body.velocity.y + enemy.lightness) * -1
+      } else {
+        hurtMulti = 0.5
+        xVel = enemy.lightness * dir * 0.5
+        yVel = enemy.lightness * -1
+      }
 
-      enemy.body.setVelocity(
-        melee.blowback * dir,
-        melee.blowback * -2
-      )
+      console.log(melee.swingingDir)
+      console.log(xVel, yVel)
 
-      enemy.hurt(damage)
-
-      console.log(enemy.hitPoints)
+      enemy.body.setVelocity(xVel, yVel)
+      enemy.hurt(hurtMulti)
     }
 
     if (swingComplete) {
       melee.cancel()
     }
+  }
+
+  hitProj (melee, proj) {
+
   }
 
   cancelSwing (melee, tile) {
@@ -151,6 +150,7 @@ class Melee extends GameObjects.Sprite {
   }
 
   cancel () {
+    this.soundPlayed = false
     this.owner.state.swinging = false
     this.owner.state.swingingTime = 0
     this.hide()
@@ -162,9 +162,6 @@ class Melee extends GameObjects.Sprite {
     this.y = -10
     this.body.setVelocity(0, 0)
   }
-
-  // LATER:
-  // implement a hurtPlayer() function if there needs to be differences in hurtEnemy
 }
 
 export default Melee
