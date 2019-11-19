@@ -26,6 +26,7 @@ class GameScene extends Scene {
     this.load.spritesheet('tiles', 'assets/images/tilesets/tiles.png', EIGHT_TILESET)
     this.load.spritesheet('player', 'assets/images/spritesheets/player.png', SIXTEEN_EXTRUDED_TILESET)
     this.load.spritesheet('hopper-purple', 'assets/images/spritesheets/hopper-purple.png', SIXTEEN_EXTRUDED_TILESET)
+    this.load.spritesheet('shooter-green', 'assets/images/spritesheets/walker-green.png', SIXTEEN_EXTRUDED_TILESET)
     this.load.spritesheet('wand', 'assets/images/spritesheets/wand.png', SIXTEEN_EXTRUDED_TILESET)
     this.load.spritesheet('ball', 'assets/images/spritesheets/ball.png', SIXTEEN_EXTRUDED_TILESET)
     this.load.image('background', 'assets/images/backgrounds/one-one.png')
@@ -35,10 +36,11 @@ class GameScene extends Scene {
 
     this.animsConfig = this.cache.json.entries.entries.animations
     this.worldConfig = this.cache.json.entries.entries.worlds[this.worldName]
-    this.animsArray = ['player', 'hopper-purple', 'wand', 'ball']
+    this.animsArray = ['player', 'shooter-green', 'hopper-purple', 'wand', 'ball']
   }
 
   create () {
+    this.consts()
     const { backgroundColor, maps } = this.worldConfig
 
     // ROOM STUFF
@@ -72,7 +74,7 @@ class GameScene extends Scene {
     this.player = new Player({
       scene: this,
       x: 16,
-      y: 156
+      y: 164
     })
     this.physics.world.addCollider(this.player, this.groundLayer)
 
@@ -106,7 +108,6 @@ class GameScene extends Scene {
   update (time, delta) {
     this.player.update(delta, this.keys)
 
-    // console.time('checkRoom')
     if (this.player.x > this.roomRight - ROOM_EDGE && this.currentRoom < this.totalRooms - 1 && !this.movingRoom) {
       this.moveRoom()
     }
@@ -122,15 +123,11 @@ class GameScene extends Scene {
 
   playerOverlapEnemy (player, enemy) {
     if (!enemy.state.hurt && !player.state.resurrecting && player.alive && enemy.alive) {
-      console.log('killing player')
       player.kill()
     }
   }
 
   moveRoom () {
-    // TODO:
-    // remove all projectiles/enemies collidiing with world bounds
-    // add handler for what the player should be doing.
     this.deactivatePests()
 
     this.tweens.add({
@@ -162,6 +159,7 @@ class GameScene extends Scene {
     this.movingRoom = false
     this.physics.world.setBounds(this.roomLeft, 0, MAP_PIXEL_WIDTH, PHYSICS_HEIGHT)
     this.activatePests()
+    this.deactivateProjectiles()
     this.physics.resume()
   }
 
@@ -177,15 +175,12 @@ class GameScene extends Scene {
     })
   }
 
-  // TODO: remove following method.
   deactivateProjectiles () {
-    this.enemies.projectiles.entries.map(proj => proj.deactivate())
-  }
-
-  activateProjectiles () {
-    // only activate ones that are moving, and within the camera bounds.
-    // deactive ones that are moving and are outside of the bounds.
-    // this.enemies.projectiles.entries.map(proj => proj.activate())
+    this.projectiles.children.entries.map(proj => {
+      if (proj.active) {
+        proj.disappear()
+      }
+    })
   }
 
   createAnimations () {
@@ -245,6 +240,10 @@ class GameScene extends Scene {
         this.enemies.add(newEnemy)
       })
     }
+  }
+
+  consts () {
+    this.ROOM_HEIGHT = ROOM_HEIGHT
   }
 }
 

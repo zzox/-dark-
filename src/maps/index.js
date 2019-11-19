@@ -49,10 +49,30 @@ export const is = {
 }
 
 export const maybe = {
+  enemies: [
+    {
+      pos: { x: 20.5, y: 20 },
+      type: 'shooter-green'
+    },
+    {
+      pos: { x: 34.5, y: 20 },
+      type: 'shooter-green'
+    }
+  ],
   items: [...middlePlatform]
 }
 
 export const surely = {
+  enemies: [
+    {
+      pos: { x: 20.5, y: 20 },
+      type: 'shooter-green'
+    },
+    {
+      pos: { x: 34.5, y: 20 },
+      type: 'shooter-green'
+    }
+  ],
   items: [...middlePlatform]
 }
 

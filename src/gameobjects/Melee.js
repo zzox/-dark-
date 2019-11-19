@@ -126,9 +126,6 @@ class Melee extends GameObjects.Sprite {
         yVel = enemy.lightness * -1
       }
 
-      console.log(melee.swingingDir)
-      console.log(xVel, yVel)
-
       enemy.body.setVelocity(xVel, yVel)
       enemy.hurt(hurtMulti)
     }
@@ -139,7 +136,42 @@ class Melee extends GameObjects.Sprite {
   }
 
   hitProj (melee, proj) {
+    // TODO:
+    const swingComplete = melee.minimumSwingComplete
 
+    const MELEE_POWER = 100
+
+    if (!proj.exploded) {
+      let dir = 0
+      let hurtMulti = 1
+      if (melee.direction === 'left') {
+        dir = -1
+      } else if (melee.direction === 'right') {
+        dir = 1
+      } else {
+        // TODO: Remove
+        alert('shoouldn\'t be here')
+      }
+
+      let xVel, yVel
+      if (melee.swingingDir === 'up') {
+        xVel = (MELEE_POWER + Math.abs(proj.body.velocity.x)) * dir
+        yVel = proj.body.velocity.y
+      } else if (melee.swingingDir === 'down') {
+        xVel = (MELEE_POWER + Math.abs(proj.body.velocity.x)) * dir
+        yVel = (proj.body.velocity.y + MELEE_POWER) * -1
+      } else {
+        hurtMulti = 0.5
+        xVel = proj.lightness * dir * 0.5
+        yVel = proj.lightness * -1
+      }
+
+      proj.body.setVelocity(xVel * hurtMulti, yVel * hurtMulti)
+    }
+
+    if (swingComplete) {
+      melee.cancel()
+    }
   }
 
   cancelSwing (melee, tile) {

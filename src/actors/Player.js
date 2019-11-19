@@ -15,8 +15,8 @@ class Player extends GameObjects.Sprite {
 
     this.name = 'player'
 
-    this.body.setSize(10, 12)
-    this.body.offset.set(3, 4)
+    this.body.setSize(8, 11)
+    this.body.offset.set(4, 5)
 
     this.acceleration = 800
     this.body.maxVelocity.set(120, 200)
@@ -45,7 +45,6 @@ class Player extends GameObjects.Sprite {
 
     this.projName = 'ball'
     this.projConfig = this.scene.cache.json.entries.entries.projectiles[this.projName]
-    console.log(this.projConfig)
 
     this.startingState()
   }
@@ -90,6 +89,9 @@ class Player extends GameObjects.Sprite {
       this.state.resurrecting = true
       this.state.resurrectTimer = this.state.resurrectTime
     }
+
+    // should always face right in this game.
+    this.flipX = true
   }
 
   update (delta, keys) {
@@ -163,6 +165,10 @@ class Player extends GameObjects.Sprite {
       if (!input.jump) {
         this.jumping = false
         this.jumpTime = 0
+      }
+
+      if (!this.body.blocked.down && this.prevState.blockedDown && !this.jumping) {
+        this.jumps++
       }
 
       if (this.body.blocked.down) {
@@ -252,9 +258,12 @@ class Player extends GameObjects.Sprite {
         const proj = this.scene.projectiles.get()
 
         let vel = this.state.shootingTime / this.projConfig.maxHoldTime
-
         if (vel > 1) {
           vel = 1
+        }
+
+        if (vel < 0.25) {
+          vel = 0.25
         }
 
         const data = {
@@ -397,9 +406,14 @@ class Player extends GameObjects.Sprite {
     // TODO: check here for lives
   }
 
+  hit () {
+    // from projectile
+    this.kill()
+  }
+
   resurrect () {
     this.x = this.scene.roomLeft + 8
-    this.y = 156
+    this.y = 164
     this.startingState(true)
   }
 }

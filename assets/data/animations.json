@@ -90,6 +90,9 @@
   "hopper-purple": {
     "alias": "enemy-simple"
   },
+  "shooter-green": {
+    "alias": "enemy-simple"
+  },
   "enemy-simple": {
     "anims": [
       {

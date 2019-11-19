@@ -1,5 +1,7 @@
 import { GameObjects } from 'phaser'
 
+const MIN_EXPLODE_TIME = 120
+
 class Projectile extends GameObjects.Sprite {
   constructor (scene) {
     super(scene)
@@ -42,7 +44,7 @@ class Projectile extends GameObjects.Sprite {
     fadeOut,
     spawnChildren,
     childrenPattern,
-    explodeTimer,
+    explodeTimer = 3000,
     activeExplosion
   }) {
     // TODO: remove damage,
@@ -65,12 +67,7 @@ class Projectile extends GameObjects.Sprite {
     this.explodeTimer = explodeTimer
     this.activeExplosion = activeExplosion
     this.fadeOut = fadeOut
-
-    if (this.explodeTimer) {
-      this.explodeTime = 0
-    } else {
-      this.explodeTimer = false
-    }
+    this.explodeTime = 0
 
     this.setActive(true)
     this.setVisible(true)
@@ -105,15 +102,11 @@ class Projectile extends GameObjects.Sprite {
       this.scene.physics.world.collide(this, this.scene.groundLayer, this.dragGround.bind(this))
     }
 
-    // TODO: Remove this, and we check if it collides with anything, besides
-    // collision with itself.  In that case, we need to add a timer so that we don't hit ourselves
-    // on the first couple frames.
-    if (this.from === 'player') {
-      if (!(this.exploded && !this.activeExplosion)) {
-        this.scene.physics.world.overlap(this, this.scene.enemies, this.hitEnemy.bind(this))
+    if (this.explodeTime > MIN_EXPLODE_TIME) {
+      this.scene.physics.world.overlap(this, this.scene.enemies, this.hitEnemy.bind(this))
+      if (!this.scene.player.state.hurt && !this.scene.player.state.resurrecting) {
+        this.scene.physics.world.overlap(this, this.scene.player, this.hitEnemy.bind(this))
       }
-    } else if (this.from === 'enemy') {
-      this.scene.physics.world.overlap(this, this.scene.player, this.hitEnemy.bind(this))
     }
 
     if (this.canFlipY) {
@@ -125,9 +118,9 @@ class Projectile extends GameObjects.Sprite {
     }
 
     if (this.body.velocity.x < 0) {
-      this.flipX = false
-    } else {
       this.flipX = true
+    } else {
+      this.flipX = false
     }
 
     if (this.hit) {
@@ -146,12 +139,10 @@ class Projectile extends GameObjects.Sprite {
       this.disappear()
     }
 
-    if (this.explodeTimer) {
-      if (this.explodeTime > this.explodeTimer && !this.exploded) {
-        this.explode()
-      } else {
-        this.explodeTime += delta
-      }
+    if (this.explodeTime > this.explodeTimer && !this.exploded) {
+      this.explode()
+    } else {
+      this.explodeTime += delta
     }
 
     this.prevState = {
@@ -196,13 +187,15 @@ class Projectile extends GameObjects.Sprite {
       this.spawnChildrens()
       this.disappear()
     }
-    
+
     this.anims.play(`${this.name}-explode`, true)
+    console.log(this.anims)
     this.body.setVelocity(0, 0)
     this.body.allowGravity = false
     this.hit = true
   }
 
+  // TODO: remove this?
   spawnChildrens () {
     if (this.childrenPattern === 'plus') {
       this.plusPattern('sparkle').map(item => {
@@ -212,6 +205,7 @@ class Projectile extends GameObjects.Sprite {
     }
   }
 
+  // and this
   plusPattern (name) {
     const details = this.scene.weaponsConfig[name]
     return [

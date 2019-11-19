@@ -6,10 +6,11 @@
 		"blowback": 150,
 		"ammoInc": 9,
 		"maxHoldTime": 300,
+		"explodeTimer": 1500,
 		"fireTime": 150,
 		"spawnChildren": false,
 		"bounce": false,
-		"explodeGround": true,
+		"explodeGround": false,
 		"activeExplosion": false,
 		"fadeOut": true
 	},
