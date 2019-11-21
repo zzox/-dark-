@@ -189,7 +189,6 @@ class Projectile extends GameObjects.Sprite {
     }
 
     this.anims.play(`${this.name}-explode`, true)
-    console.log(this.anims)
     this.body.setVelocity(0, 0)
     this.body.allowGravity = false
     this.hit = true

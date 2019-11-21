@@ -68,7 +68,10 @@ class Player extends GameObjects.Sprite {
       shooting: false,
       shootingTime: 0,
       postShooting: false,
-      postShootTime: 0
+      postShootTimer: 0,
+      shootRefreshing: false,
+      shootRefreshTimer: 0,
+      shootRefreshTime: 5000
     }
 
     this.prevState = {
@@ -102,8 +105,7 @@ class Player extends GameObjects.Sprite {
       down: keys.down.isDown,
       jump: keys.jump.isDown,
       melee: keys.melee.isDown,
-      shoot: keys.shoot.isDown,
-      dash: keys.dash.isDown
+      shoot: keys.shoot.isDown
     }
 
     const holds = {
@@ -113,8 +115,7 @@ class Player extends GameObjects.Sprite {
       down: keys.down.timeDown,
       jump: keys.jump.timeDown,
       shoot: keys.shoot.timeDown,
-      melee: keys.melee.timeDown,
-      dash: keys.dash.timeDown
+      melee: keys.melee.timeDown
     }
 
     if (!this.alive) {
@@ -141,7 +142,11 @@ class Player extends GameObjects.Sprite {
       }
 
       if (input.shoot && !this.prevState.shoot) {
-        this.shoot()
+        if (this.state.shootRefreshing) {
+          console.log('not yet!!!')
+        } else {
+          this.shoot()
+        }
       }
 
       this.updateStates(delta, input)
@@ -287,21 +292,29 @@ class Player extends GameObjects.Sprite {
         this.state.shooting = false
         this.state.shootingTime = 0
         this.state.postShooting = true
-        this.state.postShootingTime = this.projConfig.fireTime
+        this.state.postShootingTimer = this.projConfig.fireTime
+        this.state.shootRefreshing = true
+        this.state.shootRefreshTimer = this.state.shootRefreshTime
       }
     }
 
     if (this.state.postShooting) {
-      if (this.state.postShootingTime > 0) {
-        this.state.postShootingTime -= delta
+      if (this.state.postShootingTimer > 0) {
+        this.state.postShootingTimer -= delta
       } else {
         this.state.postShooting = false
-        this.state.postShootingTime = 0
+        this.state.postShootingTimer = 0
       }
     }
 
-    if (this.state.lastFiredTime > 0) {
-      this.state.lastFiredTime -= delta
+    if (this.state.shootRefreshing) {
+      if (this.state.shootRefreshTimer > 0) {
+        this.state.shootRefreshTimer -= delta
+      } else {
+        console.log('can shoot')
+        this.state.shootRefreshing = false
+        this.state.shootRefreshTimer = 0
+      }
     }
 
     if (!this.state.canRun) {

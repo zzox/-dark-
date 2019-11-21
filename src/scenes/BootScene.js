@@ -12,6 +12,7 @@ class BootScene extends Scene {
     this.load.json('animations', 'assets/data/animations.json')
     this.load.json('worlds', 'assets/data/worlds.json')
     this.load.json('projectiles', 'assets/data/projectiles.json')
+    this.load.json('pests', 'assets/data/pests.json')
   }
 
   create () {

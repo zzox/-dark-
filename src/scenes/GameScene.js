@@ -1,8 +1,8 @@
 import { Scene, Input, Geom } from 'phaser'
 import Player from '../actors/Player'
+import Pest from '../actors/Pest'
 import Projectile from '../gameobjects/Projectile'
 import * as maps from '../maps'
-import { enemyPicker } from '../utils/pickers'
 
 // TODO: move to consts file
 const TEXT_SIZE = 16
@@ -35,6 +35,7 @@ class GameScene extends Scene {
     this.worldName = 'one'
 
     this.animsConfig = this.cache.json.entries.entries.animations
+    this.pestsConfig = this.cache.json.entries.entries.pests
     this.worldConfig = this.cache.json.entries.entries.worlds[this.worldName]
     this.animsArray = ['player', 'shooter-green', 'hopper-purple', 'wand', 'ball']
   }
@@ -66,7 +67,7 @@ class GameScene extends Scene {
     this.add.bitmapText(20, 20, 'font', 'we here', 72).setAlpha(0.1)
 
     const map = this.make.tilemap({ width: this.totalRooms * MAP_TILE_WIDTH, height: 22, tileWidth: 8, tileHeight: 8 })
-    const tiles = map.addTilesetImage('tiles', null, 8, 8)
+    map.addTilesetImage('tiles', null, 8, 8)
 
     this.groundLayer = map.createBlankDynamicLayer('ground', 'tiles', this.roomLeft, ROOM_TOP)
       .setCollisionBetween(0, 16)
@@ -89,7 +90,7 @@ class GameScene extends Scene {
     this.physics.world.addOverlap(this.player, this.enemies, this.playerOverlapEnemy)
     this.physics.world.addCollider(this.enemies, this.groundLayer)
 
-    const { UP, LEFT, RIGHT, DOWN, A, S, D, Q, W, E } = Input.Keyboard.KeyCodes
+    const { UP, LEFT, RIGHT, DOWN, A, S, D } = Input.Keyboard.KeyCodes
 
     this.keys = {
       up: this.input.keyboard.addKey(UP),
@@ -98,8 +99,7 @@ class GameScene extends Scene {
       down: this.input.keyboard.addKey(DOWN),
       jump: this.input.keyboard.addKey(A),
       melee: this.input.keyboard.addKey(S),
-      shoot: this.input.keyboard.addKey(D),
-      dash: this.input.keyboard.addKey(Q)
+      shoot: this.input.keyboard.addKey(D)
     }
 
     this.createAnimations()
@@ -227,15 +227,13 @@ class GameScene extends Scene {
 
     if (enemies) {
       enemies.map((enemy) => {
-        const newEnemy = enemyPicker(
-          enemy.type,
-          {
-            scene: this,
-            roomIndex: index,
-            x: (enemy.pos.x + xDifferential) * TILE_SIZE,
-            y: enemy.pos.y * TILE_SIZE
-          }
-        )
+        const newEnemy = new Pest({
+          scene: this,
+          roomIndex: index,
+          x: (enemy.pos.x + xDifferential) * TILE_SIZE,
+          y: enemy.pos.y * TILE_SIZE,
+          config: this.pestsConfig[enemy.type]
+        })
 
         this.enemies.add(newEnemy)
       })

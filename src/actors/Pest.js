@@ -8,13 +8,13 @@ import {
 
 const CLEAR_TINT = 0xFFFFFF
 
-class HoppingPest extends GameObjects.Sprite {
-  constructor ({ scene, x, y, roomIndex }) {
+class ShootingPest extends GameObjects.Sprite {
+  constructor ({ scene, x, y, roomIndex, config }) {
     super(scene, x, y)
     scene.physics.world.enable(this)
     scene.add.existing(this)
     // MD:
-    this.name = 'hopper-purple'
+    this.name = config.name
     this.roomIndex = roomIndex
 
     // this.body.setVelocity(0, 0).setBounce(0, 0)
@@ -34,13 +34,13 @@ class HoppingPest extends GameObjects.Sprite {
     this.decisionTimer = 0
 
     this.attackDistance = {
-      x: 100,
-      y: 100
+      x: config.attackDistance.x,
+      y: config.attackDistance.y
     }
 
     this.attackVelocity = {
-      x: 150,
-      y: 300
+      x: config.attackVelocity.x,
+      y: config.attackVelocity.y
     }
 
     this.alive = true
@@ -48,6 +48,7 @@ class HoppingPest extends GameObjects.Sprite {
     this.lightness = 100
     this.lightnessInc = 50
     this.randomAttackChance = 0.025
+    this.mainAttack = config.mainAttack
 
     this.state = {
       move: 'idle',
@@ -57,14 +58,28 @@ class HoppingPest extends GameObjects.Sprite {
       hurtStep: 0,
       deadTimer: 0,
       deadTime: 666,
-      deadStep: 0
+      deadStep: 0,
+      fired: false
     }
+
+    this.canFire = config.canFire
 
     this.prevState = {
       moveState: 'idle'
     }
 
     this.isActive = false
+
+    // for shooting pest
+    if (this.canFire) {
+      this.fireVel = {
+        x: config.fireVel.x,
+        y: config.fireVel.y
+      }
+
+      this.projName = config.projName
+      this.projConfig = this.scene.cache.json.entries.entries.projectiles[this.projName]
+    }
   }
 
   update (delta) {
@@ -151,6 +166,22 @@ class HoppingPest extends GameObjects.Sprite {
           this.body.setVelocityX(0)
         }
         break
+      case 'fire':
+        if (!this.state.fired) {
+          const proj = this.scene.projectiles.get()
+          proj.fire({
+            x: this.x,
+            y: this.y,
+            xVel: this.fireVel.x,
+            yVel: this.fireVel.y,
+            dir: this.scene.player.x < this.x ? 'left' : 'right',
+            name: this.projName,
+            fromActor: this.name,
+            ...this.projConfig
+          })
+          this.state.fired = true
+        }
+        break
       default:
         break
     }
@@ -158,6 +189,9 @@ class HoppingPest extends GameObjects.Sprite {
 
   // TODO: make parent
   makeDecision () {
+    if (this.canFire) {
+      this.state.fired = false
+    }
     // if player is close, attack.
     // if not, then just chill
 
@@ -165,7 +199,7 @@ class HoppingPest extends GameObjects.Sprite {
     if ((player && this.body.blocked.down && Math.abs(player.x - this.x) < this.attackDistance.x &&
       Math.abs(player.y - this.y) < this.attackDistance.y) ||
       Math.random() < this.randomAttackChance) {
-      this.state.move = 'attack'
+      this.state.move = this.mainAttack
     }
 
     this.decisionTime = this.chooseDecisionTime()
@@ -204,4 +238,4 @@ class HoppingPest extends GameObjects.Sprite {
   }
 }
 
-export default HoppingPest
+export default ShootingPest
