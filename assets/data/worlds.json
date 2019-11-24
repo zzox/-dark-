@@ -1,22 +1,24 @@
 {
 	"one": {
-		"backgroundColor": "0x0d2030",
 		"maps": [
 			{
 				"possibilities": ["the"]
 			},
 			{
-				"possibilities": ["maybe", "surely"]
+				"possibilities": ["world"]
 			},
 			{
 				"possibilities": ["is"]
 			},
 			{
-				"possibilities": ["world"]
+				"possibilities": ["maybe", "surely"]
 			},
 			{
 				"possibilities": ["ending"]
 			}
 		]
+	},
+	"two": {
+
 	}
 }

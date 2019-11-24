@@ -2,6 +2,9 @@ import { Game, WEBGL } from 'phaser'
 import BootScene from './scenes/BootScene'
 import ClickStart from './scenes/ClickStart'
 import GameScene from './scenes/GameScene'
+import TitleScene from './scenes/TitleScene'
+import WorldScene from './scenes/WorldScene'
+import GameOver from './scenes/GameOver'
 
 const config = {
   type: WEBGL,
@@ -20,8 +23,11 @@ const config = {
   },
   scene: [
     BootScene,
+    TitleScene,
     ClickStart,
-    GameScene
+    GameScene,
+    WorldScene,
+    GameOver
   ]
 }
 

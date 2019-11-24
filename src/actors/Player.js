@@ -8,7 +8,7 @@ import {
 } from './helpers'
 
 class Player extends GameObjects.Sprite {
-  constructor ({ scene, x, y }) {
+  constructor ({ scene, x, y, lives }) {
     super(scene, x, y)
     scene.physics.world.enable(this)
     scene.add.existing(this)
@@ -24,7 +24,7 @@ class Player extends GameObjects.Sprite {
 
     this.body.setCollideWorldBounds(true)
 
-    this.lives = 3
+    this.lives = lives
     this.jumps = 0
     this.maxJumps = 2
     this.jumpTime = 0
@@ -34,6 +34,7 @@ class Player extends GameObjects.Sprite {
 
     this.animation = 'stand'
 
+    // TODO: Remove Dynamics
     this.meleeName = 'wand'
     // this.meleeConfig = this.scene.cache.json.entries.entries.melees[this.meleeName]
     this.melee = new Melee({
@@ -71,7 +72,7 @@ class Player extends GameObjects.Sprite {
       postShootTimer: 0,
       shootRefreshing: false,
       shootRefreshTimer: 0,
-      shootRefreshTime: 5000
+      shootRefreshTime: 3000
     }
 
     this.prevState = {
@@ -95,6 +96,10 @@ class Player extends GameObjects.Sprite {
 
     // should always face right in this game.
     this.flipX = true
+
+    if (this.scene.hud) {
+      this.scene.hud.updateLoader({ shootVal: 0, reloadVal: 1 })
+    }
   }
 
   update (delta, keys) {
@@ -143,7 +148,7 @@ class Player extends GameObjects.Sprite {
 
       if (input.shoot && !this.prevState.shoot) {
         if (this.state.shootRefreshing) {
-          console.log('not yet!!!')
+          // TODO: add losing sound
         } else {
           this.shoot()
         }
@@ -206,7 +211,9 @@ class Player extends GameObjects.Sprite {
 
       this.updateAnimations()
 
-      this.anims.play(`${this.name}-${this.animation}`, true)
+      if (!this.scene.gameIsOver) {
+        this.anims.play(`${this.name}-${this.animation}`, true)
+      }
     }
 
     this.prevState = {
@@ -258,6 +265,11 @@ class Player extends GameObjects.Sprite {
     if (this.state.shooting) {
       // BUG: here?  what if something sneaks through here
       if (input.shoot && this.state.shootingTime < this.projConfig.maxHoldTime) {
+        this.scene.hud.updateLoader({
+          shootVal: this.state.shootingTime / this.projConfig.maxHoldTime,
+          reloadVal: 1
+        })
+
         this.state.shootingTime += delta
       } else {
         const proj = this.scene.projectiles.get()
@@ -295,6 +307,8 @@ class Player extends GameObjects.Sprite {
         this.state.postShootingTimer = this.projConfig.fireTime
         this.state.shootRefreshing = true
         this.state.shootRefreshTimer = this.state.shootRefreshTime
+
+        this.scene.hud.updateLoader({ reloadVal: 0, shootVal: 0 })
       }
     }
 
@@ -308,10 +322,13 @@ class Player extends GameObjects.Sprite {
     }
 
     if (this.state.shootRefreshing) {
+      this.scene.hud.updateLoader({
+        reloadVal: 1 - (this.state.shootRefreshTimer / this.state.shootRefreshTime)
+      })
+
       if (this.state.shootRefreshTimer > 0) {
         this.state.shootRefreshTimer -= delta
       } else {
-        console.log('can shoot')
         this.state.shootRefreshing = false
         this.state.shootRefreshTimer = 0
       }
@@ -394,7 +411,6 @@ class Player extends GameObjects.Sprite {
   }
 
   swing () {
-    // TODO: check if can swing
     if (!this.state.shooting && !this.state.shooting && !this.state.postShooting) {
       this.state.swinging = true
     }
@@ -417,6 +433,11 @@ class Player extends GameObjects.Sprite {
       this.melee.cancel()
     }
     // TODO: check here for lives
+    this.lives--
+    this.scene.hud.updateLives(this.lives)
+    if (this.lives === 0) {
+      this.scene.gameOver()
+    }
   }
 
   hit () {

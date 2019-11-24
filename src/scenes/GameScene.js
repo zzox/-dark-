@@ -3,6 +3,7 @@ import Player from '../actors/Player'
 import Pest from '../actors/Pest'
 import Projectile from '../gameobjects/Projectile'
 import * as maps from '../maps'
+import HUD from '../gameobjects/HUD'
 
 // TODO: move to consts file
 const TEXT_SIZE = 16
@@ -16,10 +17,16 @@ const ROOM_EDGE = 8
 const ROOM_HEIGHT = 200
 // so we collide in all sides besides the bottom.
 const PHYSICS_HEIGHT = 500
+const STARTING_LIVES = 3
+const GAME_OVER_TIME = 666
 
 class GameScene extends Scene {
   constructor () {
     super({ key: 'GameScene' })
+  }
+
+  init ({ worldName }) {
+    this.worldName = worldName
   }
 
   preload () {
@@ -29,10 +36,10 @@ class GameScene extends Scene {
     this.load.spritesheet('shooter-green', 'assets/images/spritesheets/walker-green.png', SIXTEEN_EXTRUDED_TILESET)
     this.load.spritesheet('wand', 'assets/images/spritesheets/wand.png', SIXTEEN_EXTRUDED_TILESET)
     this.load.spritesheet('ball', 'assets/images/spritesheets/ball.png', SIXTEEN_EXTRUDED_TILESET)
-    this.load.image('background', 'assets/images/backgrounds/one-one.png')
-
-    // MD:
-    this.worldName = 'one'
+    this.load.image('one-bg', 'assets/images/backgrounds/one-bg.png')
+    this.load.image('bar', 'assets/images/bar.png')
+    this.load.image('bar-shine', 'assets/images/bar-shine.png')
+    this.load.image('door', 'assets/images/door.png')
 
     this.animsConfig = this.cache.json.entries.entries.animations
     this.pestsConfig = this.cache.json.entries.entries.pests
@@ -42,7 +49,7 @@ class GameScene extends Scene {
 
   create () {
     this.consts()
-    const { backgroundColor, maps } = this.worldConfig
+    const { maps } = this.worldConfig
 
     // ROOM STUFF
     this.roomLeft = 0
@@ -52,19 +59,11 @@ class GameScene extends Scene {
     this.movingRoom = false
     this.physics.world.setBounds(0, 0, MAP_PIXEL_WIDTH, PHYSICS_HEIGHT)
 
-    // NEED THIS?
-    let rect = new Geom.Rectangle(-10, -10, 340, 200)
-    this.add.graphics({ fillStyle: { color: 0x000000 } })
-      .fillRectShape(rect).setScrollFactor(0)
+    // MD:
+    this.add.image(240, 90, 'one-bg')
+      .setScrollFactor(0.1, 0)
 
-    // this.add.image(160, 90, 'background')
-    //   .setScrollFactor(0.1, 0)
-
-    rect = new Geom.Rectangle(0, 0, 320, 180)
-    this.add.graphics({ fillStyle: { color: parseInt(backgroundColor) } })
-      .fillRectShape(rect).setScrollFactor(0)
-
-    this.add.bitmapText(20, 20, 'font', 'we here', 72).setAlpha(0.1)
+    this.add.bitmapText(20, 20, 'font', 'we here', 72).setAlpha(0.01)
 
     const map = this.make.tilemap({ width: this.totalRooms * MAP_TILE_WIDTH, height: 22, tileWidth: 8, tileHeight: 8 })
     map.addTilesetImage('tiles', null, 8, 8)
@@ -75,7 +74,8 @@ class GameScene extends Scene {
     this.player = new Player({
       scene: this,
       x: 16,
-      y: 164
+      y: 164,
+      lives: STARTING_LIVES // MD:
     })
     this.physics.world.addCollider(this.player, this.groundLayer)
 
@@ -103,6 +103,15 @@ class GameScene extends Scene {
     }
 
     this.createAnimations()
+
+    this.hud = new HUD({ scene: this, lives: this.player.lives }) // MD:
+
+    this.exit = this.addExit()
+
+    this.physics.world.addOverlap(this.player, this.exit, this.hitDoor, null, this)
+
+    this.gameOverTimer = 0
+    this.gameIsOver = false
   }
 
   update (time, delta) {
@@ -119,6 +128,22 @@ class GameScene extends Scene {
     this.enemies.children.entries.map((enemy) => enemy.update(delta))
 
     this.projectiles.children.entries.map(projectiles => projectiles.update(time, delta))
+
+    if (this.gameIsOver) {
+      if (!this.gameOverTimer) {
+        this.cameras.main.fadeOut(GAME_OVER_TIME)
+      }
+
+      if (this.gameOverTimer > GAME_OVER_TIME) {
+        if (this.worldWon) {
+          this.scene.start('WorldScene', { completedWorld: this.worldName })
+        } else {
+          this.scene.start('GameOver', { fromWorld: this.worldName })
+        }
+      } else {
+        this.gameOverTimer += delta
+      }
+    }
   }
 
   playerOverlapEnemy (player, enemy) {
@@ -240,8 +265,33 @@ class GameScene extends Scene {
     }
   }
 
+  addExit () {
+    let door = this.add.sprite((this.totalRooms - 1) * MAP_PIXEL_WIDTH + 272, 156, 'door')
+    
+    this.physics.world.enable(door)
+    this.add.existing(door)
+
+    door.body.setSize(16, 12)
+      .setOffset(8, 12)
+      .setAllowGravity(false)
+      .setImmovable(true)
+
+    return door
+  }
+
+  hitDoor () {
+    this.worldWon = true
+    this.gameIsOver = true
+    this.player.anims.pause()
+    this.physics.pause()
+  }
+
   consts () {
     this.ROOM_HEIGHT = ROOM_HEIGHT
+  }
+
+  gameOver () {
+    this.gameIsOver = true
   }
 }
 

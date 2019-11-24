@@ -20,7 +20,7 @@ class BootScene extends Scene {
       this.resize()
     })
 
-    this.scene.start('GameScene')
+    this.scene.start('TitleScene')
   }
 
   resize () {
