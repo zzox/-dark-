@@ -1,11 +1,11 @@
-const createMaster = () => {
+export const createMaster = (finished = []) => {
   window.master = {
-    finished: []
+    finished: [...finished]
   }
 }
 
-const const completedWorld = (world) => {
-  // TODO: Remove
+export const completedWorld = (world) => {
+  // TODO: Remove and check if it's already completed
   if (!window.master) {
     throw new Error('Master not initialized.')
   }
@@ -13,7 +13,7 @@ const const completedWorld = (world) => {
   window.master.finished.push(world)
 }
 
-const getWorlds = () => {
+export const getWorlds = () => {
   if (!window.master) {
     throw new Error('Master not initialized.')
   }

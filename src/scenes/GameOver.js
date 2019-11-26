@@ -11,7 +11,7 @@ class GameOver extends Scene {
   }
 
   create(){
-    let { ENTER, UP, DOWN } = Input.Keyboard.KeyCodes
+    const { ENTER, UP, DOWN } = Input.Keyboard.KeyCodes
     // this.add.image(240, 80, 'static-title')
     this.cameras.main.setBackgroundColor('#0d2030')
 
@@ -31,8 +31,8 @@ class GameOver extends Scene {
     }
 
     this.startKey = this.input.keyboard.addKey(ENTER)
-    this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP)
-    this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
+    this.upKey = this.input.keyboard.addKey(UP)
+    this.downKey = this.input.keyboard.addKey(DOWN)
 
     this.cameras.main.fadeIn(2000)
 
@@ -48,7 +48,7 @@ class GameOver extends Scene {
       this.quit()
     }
 
-    if(this.downKey.isDown && this.downKey.isDown !== this.prevState.downKey){
+    if (this.downKey.isDown && this.downKey.isDown !== this.prevState.downKey) {
       if (this.menuPos === this.menuPositions) {
         this.menuPos = this.menuPositions // only for main
       } else {
@@ -99,4 +99,3 @@ class GameOver extends Scene {
 }
 
 export default GameOver
-

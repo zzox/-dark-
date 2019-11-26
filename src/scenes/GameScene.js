@@ -40,6 +40,7 @@ class GameScene extends Scene {
     this.load.image('bar', 'assets/images/bar.png')
     this.load.image('bar-shine', 'assets/images/bar-shine.png')
     this.load.image('door', 'assets/images/door.png')
+    this.load.image('aimer', 'assets/images/aimer.png')
 
     this.animsConfig = this.cache.json.entries.entries.animations
     this.pestsConfig = this.cache.json.entries.entries.pests
@@ -266,8 +267,8 @@ class GameScene extends Scene {
   }
 
   addExit () {
-    let door = this.add.sprite((this.totalRooms - 1) * MAP_PIXEL_WIDTH + 272, 156, 'door')
-    
+    const door = this.add.sprite((this.totalRooms - 1) * MAP_PIXEL_WIDTH + 272, 156, 'door')
+
     this.physics.world.enable(door)
     this.add.existing(door)
 

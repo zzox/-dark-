@@ -25,15 +25,14 @@ export const the = {
 }
 
 export const world = {
-  enemies: [
-    {
-      pos: { x: 20.5, y: 20 },
-      type: 'hopper-purple'
-    }
-  ],
-  items: [...middlePlatform]
+  items: [
+    ...horizontalLine(0, 9, 21),
+    ...horizontalLine(16, 24, 17),
+    ...horizontalLine(30, 39, 21)
+  ]
 }
 
+// put auto shooter here?
 export const is = {
   enemies: [
     {
@@ -45,24 +44,60 @@ export const is = {
       type: 'hopper-purple'
     }
   ],
-  items: [...middlePlatform]
+  items: [...flatLine]
 }
 
 export const maybe = {
   enemies: [
     {
       pos: { x: 20.5, y: 20 },
-      type: 'shooter-green'
-    },
+      type: 'hopper-purple'
+    }
+  ],
+  items: [...flatLine]
+}
+
+export const surely = {
+  enemies: [
     {
       pos: { x: 34.5, y: 20 },
-      type: 'shooter-green'
+      type: 'hopper-purple'
+    }
+  ],
+  items: [...flatLine]
+}
+
+export const ending = {
+  items: [
+    ...horizontalLine(0, 39, 21)
+  ]
+}
+
+export const world2 = {
+  enemies: [
+    {
+      pos: { x: 20.5, y: 20 },
+      type: 'hopper-purple'
     }
   ],
   items: [...middlePlatform]
 }
 
-export const surely = {
+export const is2 = {
+  enemies: [
+    {
+      pos: { x: 20.5, y: 20 },
+      type: 'hopper-purple'
+    },
+    {
+      pos: { x: 34.5, y: 20 },
+      type: 'hopper-purple'
+    }
+  ],
+  items: [...middlePlatform]
+}
+
+export const maybe2 = {
   enemies: [
     {
       pos: { x: 20.5, y: 20 },
@@ -76,8 +111,16 @@ export const surely = {
   items: [...middlePlatform]
 }
 
-export const ending = {
-  items: [
-    ...horizontalLine(0, 39, 21)
-  ]
+export const surely2 = {
+  enemies: [
+    {
+      pos: { x: 20.5, y: 20 },
+      type: 'shooter-green'
+    },
+    {
+      pos: { x: 34.5, y: 20 },
+      type: 'shooter-green'
+    }
+  ],
+  items: [...middlePlatform]
 }

@@ -1,4 +1,5 @@
 import { Scene, Input } from 'phaser'
+import { createMaster } from '../utils/worldData'
 import store from 'store'
 
 class TitleScene extends Scene {
@@ -13,7 +14,7 @@ class TitleScene extends Scene {
   }
 
   create(){
-    let { ENTER, UP, DOWN } = Input.Keyboard.KeyCodes
+    const { ENTER, UP, DOWN } = Input.Keyboard.KeyCodes
     // this.add.image(240, 80, 'static-title')
     this.cameras.main.setBackgroundColor('#0d2030')
 
@@ -29,6 +30,9 @@ class TitleScene extends Scene {
       this.menuPositions = 1
     }
 
+    // pass finished worlds to createMaster
+    createMaster()
+
     this.spr = this.add.sprite(130, 140, 'life')
 
     this.prevState = {
@@ -38,8 +42,8 @@ class TitleScene extends Scene {
     }
 
     this.startKey = this.input.keyboard.addKey(ENTER)
-    this.upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP)
-    this.downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
+    this.upKey = this.input.keyboard.addKey(UP)
+    this.downKey = this.input.keyboard.addKey(DOWN)
 
     this.cameras.main.fadeIn(2000)
 
@@ -82,7 +86,7 @@ class TitleScene extends Scene {
 
   newGame () {
     // this.clearKeys()
-    this.scene.start('GameScene', { worldName: 'one' })
+    this.scene.start('WorldScene', { worldName: 'one' })
   }
 
   loadGame (){ 

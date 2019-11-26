@@ -33,9 +33,6 @@ class HUD {
     this.scene.add.image(261, 12, 'bar-shine')
       .setScrollFactor(0)
       .setAlpha(0.4)
-
-    // full loader bar with an empty loader bar (same size)
-    // load bar holder
   }
 
   drawLives () {
@@ -50,7 +47,7 @@ class HUD {
       this.lifeNumSprite.setVisible(false)
 
       for (let i = 0; i < this.lives; i++) {
-        let spr = this.scene.add.image(i * 18 + 10, 8, 'life')
+        const spr = this.scene.add.image(i * 18 + 10, 8, 'life')
           .setScrollFactor(0)
 
         this.liveSprites.add(spr)

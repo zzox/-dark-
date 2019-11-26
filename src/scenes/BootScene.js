@@ -13,6 +13,13 @@ class BootScene extends Scene {
     this.load.json('worlds', 'assets/data/worlds.json')
     this.load.json('projectiles', 'assets/data/projectiles.json')
     this.load.json('pests', 'assets/data/pests.json')
+    this.load.json('overworld', 'assets/data/overworld.json')
+
+    this.load.image('world-map', 'assets/images/world-map.png')
+    this.load.image('finished-world', 'assets/images/finished-world.png')
+    this.load.image('unlocked-world', 'assets/images/unlocked-world.png')
+    this.load.image('locked-world', 'assets/images/locked-world.png')
+
   }
 
   create () {

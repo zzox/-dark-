@@ -7,6 +7,10 @@ import {
   quickVisibleFlash
 } from './helpers'
 
+const MAX_DEGREE = 90
+const MAX_AIMER_DISTANCE = 12
+const AIMER_INC = 2
+
 class Player extends GameObjects.Sprite {
   constructor ({ scene, x, y, lives }) {
     super(scene, x, y)
@@ -47,6 +51,12 @@ class Player extends GameObjects.Sprite {
     this.projName = 'ball'
     this.projConfig = this.scene.cache.json.entries.entries.projectiles[this.projName]
 
+    this.aimer = this.scene.add.sprite(this.x + 8, this.y - 8, 'aimer')
+    scene.physics.world.enable(this.aimer)
+    this.aimer.body.setAllowGravity(false)
+      .setSize(3, 3)
+      .setOffset(1, 1)
+
     this.startingState()
   }
 
@@ -72,7 +82,10 @@ class Player extends GameObjects.Sprite {
       postShootTimer: 0,
       shootRefreshing: false,
       shootRefreshTimer: 0,
-      shootRefreshTime: 3000
+      shootRefreshTime: 3000,
+      aimerDegree: 45,
+      aimerHideTimer: 0,
+      aimerHideTime: 1500
     }
 
     this.prevState = {
@@ -172,6 +185,45 @@ class Player extends GameObjects.Sprite {
         }
       }
 
+      let udVel = 0
+      if (input.up) {
+        udVel = -1
+      }
+
+      if (input.down) {
+        udVel = 1
+      }
+
+      if (input.down && input.up) {
+        if (holds.up > holds.down) {
+          udVel = 1
+        } else {
+          udVel = -1
+        }
+      }
+
+      if (udVel === -1) {
+        this.state.aimerDegree += AIMER_INC
+
+        if (this.state.aimerDegree > MAX_DEGREE) {
+          this.state.aimerDegree = MAX_DEGREE
+        }
+
+        this.state.aimerHideTimer = this.state.aimerHideTime
+        this.aimer.setVisible(true)
+      }
+
+      if (udVel === 1) {
+        this.state.aimerDegree -= AIMER_INC
+
+        if (this.state.aimerDegree < 0) {
+          this.state.aimerDegree = 0
+        }
+
+        this.state.aimerHideTimer = this.state.aimerHideTime
+        this.aimer.setVisible(true)
+      }
+
       if (!input.jump) {
         this.jumping = false
         this.jumpTime = 0
@@ -211,6 +263,18 @@ class Player extends GameObjects.Sprite {
 
       this.updateAnimations()
 
+      const xDist = MAX_AIMER_DISTANCE * Math.cos(this.state.aimerDegree * Math.PI / 180)
+      const yDist = MAX_AIMER_DISTANCE * Math.sin(this.state.aimerDegree * Math.PI / 180)
+      if (this.flipX) {
+        this.aimer.x = this.x + xDist + 2
+      } else {
+        this.aimer.x = this.x - xDist
+      }
+      this.aimer.y = this.y - yDist
+
+      this.aimer.body.velocity.x = this.body.velocity.x
+      this.aimer.body.velocity.y = this.body.velocity.y
+
       if (!this.scene.gameIsOver) {
         this.anims.play(`${this.name}-${this.animation}`, true)
       }
@@ -228,12 +292,6 @@ class Player extends GameObjects.Sprite {
   }
 
   updateStates (delta, input) {
-    if (this.hitPoints <= 0) {
-      // TODO: turn into death screen
-      this.scene.endWithLoss()
-      // this.scene.scene.start('BootScene')
-    }
-
     if (this.state.resurrecting) {
       if (this.state.resurrectTimer > 0) {
         this.state.resurrectTimer -= delta
@@ -271,6 +329,8 @@ class Player extends GameObjects.Sprite {
         })
 
         this.state.shootingTime += delta
+        this.aimer.setVisible(true)
+        this.state.aimerHideTimer = this.state.aimerHideTime
       } else {
         const proj = this.scene.projectiles.get()
 
@@ -286,8 +346,8 @@ class Player extends GameObjects.Sprite {
         const data = {
           x: this.x,
           y: this.y,
-          xVel: vel * this.projConfig.velocityX,
-          yVel: vel * this.projConfig.velocityY,
+          xVel: vel * Math.cos(this.state.aimerDegree * Math.PI / 180) * this.projConfig.velocity,
+          yVel: -vel * Math.sin(this.state.aimerDegree * Math.PI / 180) * this.projConfig.velocity,
           dir: this.flipX ? 'right' : 'left',
           name: this.projName,
           fromActor: 'player',
@@ -337,7 +397,7 @@ class Player extends GameObjects.Sprite {
     if (!this.state.canRun) {
       if (this.state.canRunTimer > 0) {
         this.state.canRunTimer -= delta
-      } else if (this.state.canRunTimer < 0) {
+      } else if (this.state.canRunTimer <= 0) {
         this.state.canRun = true
       }
     }
@@ -345,8 +405,16 @@ class Player extends GameObjects.Sprite {
     if (!this.state.canJump) {
       if (this.state.canJumpTimer > 0) {
         this.state.canJumpTimer -= delta
-      } else if (this.state.canJumpTimer < 0) {
+      } else if (this.state.canJumpTimer <= 0) {
         this.state.canJump = true
+      }
+    }
+
+    if (this.aimer.visible) {
+      if (this.state.aimerHideTimer > 0) {
+        this.state.aimerHideTimer -= delta
+      } else if (this.state.aimerHideTimer <= 0) {
+        this.aimer.setVisible(false)
       }
     }
   }
@@ -428,11 +496,14 @@ class Player extends GameObjects.Sprite {
     this.body.allowGravity = false
     this.body.setVelocity(0, 0)
     this.anims.pause()
+    this.aimer.setVisible(false)
+
     this.state.deadTimer = this.state.deadTime
+
     if (this.state.swinging) {
       this.melee.cancel()
     }
-    // TODO: check here for lives
+
     this.lives--
     this.scene.hud.updateLives(this.lives)
     if (this.lives === 0) {
