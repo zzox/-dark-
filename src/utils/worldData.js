@@ -1,3 +1,5 @@
+import store from 'store'
+
 export const createMaster = (finished = []) => {
   window.master = {
     finished: [...finished]
@@ -10,7 +12,11 @@ export const completedWorld = (world) => {
     throw new Error('Master not initialized.')
   }
 
-  window.master.finished.push(world)
+  if (!window.master.includes(world)) {
+    window.master.finished.push(world)
+  }
+
+  saveMaster(window.master.finished)
 }
 
 export const getWorlds = () => {
@@ -20,3 +26,5 @@ export const getWorlds = () => {
 
   return window.master
 }
+
+export const saveMaster = (finished) => store.set('dark-session', { finished })

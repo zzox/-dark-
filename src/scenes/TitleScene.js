@@ -7,12 +7,6 @@ class TitleScene extends Scene {
     super({ key: 'TitleScene' })
   }
 
-  preload () {
-    this.load.image('life', 'assets/images/life.png')
-    // TODO: make animations and load everything in boot scene.
-    // this.load.spritesheet('title', 'assets/images/spritesheets/title.png')
-  }
-
   create(){
     const { ENTER, UP, DOWN } = Input.Keyboard.KeyCodes
     // this.add.image(240, 80, 'static-title')
@@ -31,7 +25,7 @@ class TitleScene extends Scene {
     }
 
     // pass finished worlds to createMaster
-    createMaster()
+    createMaster(continuedGame.finished)
 
     this.spr = this.add.sprite(130, 140, 'life')
 

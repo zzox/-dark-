@@ -16,7 +16,7 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true,
+      // debug: true,
       tileBias: 12,
       gravity: { y: 800 }
     }

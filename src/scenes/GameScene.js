@@ -7,8 +7,6 @@ import HUD from '../gameobjects/HUD'
 
 // TODO: move to consts file
 const TEXT_SIZE = 16
-const EIGHT_TILESET = { frameWidth: 8, frameHeight: 8 }
-const SIXTEEN_EXTRUDED_TILESET = { frameWidth: 16, frameHeight: 16, spacing: 2, margin: 1 }
 const MAP_PIXEL_WIDTH = 320
 const MAP_TILE_WIDTH = 40
 const TILE_SIZE = 8
@@ -30,22 +28,8 @@ class GameScene extends Scene {
   }
 
   preload () {
-    this.load.spritesheet('tiles', 'assets/images/tilesets/tiles.png', EIGHT_TILESET)
-    this.load.spritesheet('player', 'assets/images/spritesheets/player.png', SIXTEEN_EXTRUDED_TILESET)
-    this.load.spritesheet('hopper-purple', 'assets/images/spritesheets/hopper-purple.png', SIXTEEN_EXTRUDED_TILESET)
-    this.load.spritesheet('shooter-green', 'assets/images/spritesheets/walker-green.png', SIXTEEN_EXTRUDED_TILESET)
-    this.load.spritesheet('wand', 'assets/images/spritesheets/wand.png', SIXTEEN_EXTRUDED_TILESET)
-    this.load.spritesheet('ball', 'assets/images/spritesheets/ball.png', SIXTEEN_EXTRUDED_TILESET)
-    this.load.image('one-bg', 'assets/images/backgrounds/one-bg.png')
-    this.load.image('bar', 'assets/images/bar.png')
-    this.load.image('bar-shine', 'assets/images/bar-shine.png')
-    this.load.image('door', 'assets/images/door.png')
-    this.load.image('aimer', 'assets/images/aimer.png')
-
-    this.animsConfig = this.cache.json.entries.entries.animations
     this.pestsConfig = this.cache.json.entries.entries.pests
     this.worldConfig = this.cache.json.entries.entries.worlds[this.worldName]
-    this.animsArray = ['player', 'shooter-green', 'hopper-purple', 'wand', 'ball']
   }
 
   create () {
@@ -102,8 +86,6 @@ class GameScene extends Scene {
       melee: this.input.keyboard.addKey(S),
       shoot: this.input.keyboard.addKey(D)
     }
-
-    this.createAnimations()
 
     this.hud = new HUD({ scene: this, lives: this.player.lives }) // MD:
 
@@ -206,34 +188,6 @@ class GameScene extends Scene {
       if (proj.active) {
         proj.disappear()
       }
-    })
-  }
-
-  createAnimations () {
-    if (this.anims.anims) {
-      this.anims.anims.clear()
-    }
-
-    this.animsArray.map(item => {
-      let items
-      const alias = this.animsConfig[item].alias
-
-      if (alias) {
-        items = this.animsConfig[alias].anims
-      } else {
-        items = this.animsConfig[item].anims
-      }
-
-      items.map(anim => {
-        this.anims.create({
-          key: `${item}-${anim.key}`,
-          //                                sheet vvv
-          frames: this.anims.generateFrameNumbers(item, anim.frames),
-          frameRate: anim.frameRate ? anim.frameRate : 1,
-          repeat: anim.repeat ? anim.repeat : -1,
-          repeatDelay: anim.repeatDelay ? anim.repeatDelay : 0
-        })
-      })
     })
   }
 
