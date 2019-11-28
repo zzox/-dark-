@@ -7,7 +7,7 @@ class TitleScene extends Scene {
     super({ key: 'TitleScene' })
   }
 
-  create(){
+  create () {
     const { ENTER, UP, DOWN } = Input.Keyboard.KeyCodes
     // this.add.image(240, 80, 'static-title')
     this.cameras.main.setBackgroundColor('#0d2030')
@@ -16,7 +16,7 @@ class TitleScene extends Scene {
 
     this.menuPos = 1
 
-    let continuedGame = store.get('dark-session')
+    const continuedGame = store.get('dark-session')
     if (continuedGame) {
       this.add.bitmapText(146, 155, 'font', 'Continue', 16)
       this.menuPositions = 2
@@ -25,7 +25,7 @@ class TitleScene extends Scene {
     }
 
     // pass finished worlds to createMaster
-    createMaster(continuedGame.finished)
+    createMaster(continuedGame ? continuedGame.finished : [])
 
     this.spr = this.add.sprite(130, 140, 'life')
 
@@ -53,7 +53,7 @@ class TitleScene extends Scene {
       this.loadGame()
     }
 
-    if(this.downKey.isDown && this.downKey.isDown !== this.prevState.downKey){
+    if (this.downKey.isDown && this.downKey.isDown !== this.prevState.downKey) {
       if (this.menuPos === this.menuPositions) {
         this.menuPos = this.menuPositions // only for main
       } else {
@@ -79,12 +79,11 @@ class TitleScene extends Scene {
   }
 
   newGame () {
-    // this.clearKeys()
-    this.scene.start('WorldScene', { worldName: 'one' })
+    this.scene.start('GameScene', { worldName: 'one' })
   }
 
-  loadGame (){ 
-    console.log('loading game')
+  loadGame () {
+    this.scene.start('WorldScene')
   }
 
   pauseMusic () {

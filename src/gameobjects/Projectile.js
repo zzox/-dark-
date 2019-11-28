@@ -31,7 +31,6 @@ class Projectile extends GameObjects.Sprite {
     x,
     y,
     dir,
-    fromActor,
     bounce,
     name,
     xVel,
@@ -47,7 +46,7 @@ class Projectile extends GameObjects.Sprite {
     explodeTimer = 3000,
     activeExplosion
   }) {
-    // TODO: remove damage,
+    // TODO: remove damage, blowback
     this.exploded = false
     this.hit = false
     this.hitTime = 0
@@ -55,7 +54,6 @@ class Projectile extends GameObjects.Sprite {
     // ATTN: are these values being properly reset?
     this.canFlipY = canFlipY
     this.missGround = missGround
-    this.from = fromActor
     this.name = name
     this.body.allowGravity = true
     this.direction = dir
@@ -89,7 +87,7 @@ class Projectile extends GameObjects.Sprite {
     this.anims.play(`${this.name}-move`, true)
   }
 
-  update (time, delta) {
+  update (delta) {
     if (!this.active) {
       return
     }
@@ -100,6 +98,7 @@ class Projectile extends GameObjects.Sprite {
 
     if (!this.explodeGround) {
       this.scene.physics.world.collide(this, this.scene.groundLayer, this.dragGround.bind(this))
+      this.scene.physics.world.collide(this, this.scene.autos, this.hitGround.bind(this))
     }
 
     if (this.explodeTime > MIN_EXPLODE_TIME) {

@@ -2,8 +2,10 @@ import { Scene, Input, Geom } from 'phaser'
 import Player from '../actors/Player'
 import Pest from '../actors/Pest'
 import Projectile from '../gameobjects/Projectile'
+import AutoShooter from '../gameobjects/AutoShooter'
 import * as maps from '../maps'
 import HUD from '../gameobjects/HUD'
+import { completedWorld } from '../utils/worldData'
 
 // TODO: move to consts file
 const TEXT_SIZE = 16
@@ -69,11 +71,14 @@ class GameScene extends Scene {
     for (let i = 0; i < 50; i++) {
       this.projectiles.add(new Projectile(this))
     }
+    this.autos = this.add.group()
 
     this.makeWorld()
 
     this.physics.world.addOverlap(this.player, this.enemies, this.playerOverlapEnemy)
     this.physics.world.addCollider(this.enemies, this.groundLayer)
+    this.physics.world.addCollider(this.player, this.autos)
+    this.physics.world.addCollider(this.enemies, this.autos)
 
     const { UP, LEFT, RIGHT, DOWN, A, S, D } = Input.Keyboard.KeyCodes
 
@@ -109,8 +114,8 @@ class GameScene extends Scene {
     }
 
     this.enemies.children.entries.map((enemy) => enemy.update(delta))
-
-    this.projectiles.children.entries.map(projectiles => projectiles.update(time, delta))
+    this.projectiles.children.entries.map((projectile) => projectile.update(delta))
+    this.autos.children.entries.map((auto) => auto.update(delta))
 
     if (this.gameIsOver) {
       if (!this.gameOverTimer) {
@@ -200,7 +205,7 @@ class GameScene extends Scene {
   }
 
   makeMap (room, index) {
-    const { items, enemies } = room
+    const { items, enemies, autos } = room
 
     const xDifferential = index * MAP_TILE_WIDTH
     items.map(item => this.groundLayer.putTileAt(0, item.x + xDifferential, item.y))
@@ -216,6 +221,27 @@ class GameScene extends Scene {
         })
 
         this.enemies.add(newEnemy)
+      })
+    }
+
+    if (autos) {
+      autos.map((auto) => {
+        let texture = 'auto-shooter-angle'
+        if (auto.dir === 'up' || auto.dir === 'down' || auto.dir === 'left' || auto.dir === 'right') {
+          texture = 'auto-shooter'
+        }
+
+        const newAuto = new AutoShooter({
+          scene: this,
+          roomIndex: index,
+          x: (auto.pos.x + xDifferential) * TILE_SIZE,
+          y: auto.pos.y * TILE_SIZE,
+          dir: auto.dir,
+          delay: auto.delay,
+          texture
+        })
+
+        this.autos.add(newAuto)
       })
     }
   }
@@ -235,6 +261,7 @@ class GameScene extends Scene {
   }
 
   hitDoor () {
+    completedWorld(this.worldName)
     this.worldWon = true
     this.gameIsOver = true
     this.player.anims.pause()

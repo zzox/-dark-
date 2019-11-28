@@ -12,7 +12,7 @@ export const completedWorld = (world) => {
     throw new Error('Master not initialized.')
   }
 
-  if (!window.master.includes(world)) {
+  if (!window.master.finished.includes(world)) {
     window.master.finished.push(world)
   }
 

@@ -1,5 +1,4 @@
 import { Scene, Input } from 'phaser'
-import store from 'store'
 
 class GameOver extends Scene {
   constructor () {
@@ -10,7 +9,7 @@ class GameOver extends Scene {
     this.fromWorld = fromWorld
   }
 
-  create(){
+  create () {
     const { ENTER, UP, DOWN } = Input.Keyboard.KeyCodes
     // this.add.image(240, 80, 'static-title')
     this.cameras.main.setBackgroundColor('#0d2030')

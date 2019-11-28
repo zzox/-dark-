@@ -20,16 +20,18 @@ const middlePlatform = [
   ...horizontalLine(30, 39, 21)
 ]
 
+const raisedMiddle = [
+  ...horizontalLine(0, 9, 21),
+  ...horizontalLine(16, 24, 17),
+  ...horizontalLine(30, 39, 21)
+]
+
 export const the = {
   items: [...flatLine]
 }
 
 export const world = {
-  items: [
-    ...horizontalLine(0, 9, 21),
-    ...horizontalLine(16, 24, 17),
-    ...horizontalLine(30, 39, 21)
-  ]
+  items: [...raisedMiddle]
 }
 
 // put auto shooter here?
@@ -73,31 +75,26 @@ export const ending = {
   ]
 }
 
-export const world2 = {
-  enemies: [
+export const what = {
+  autos: [
     {
-      pos: { x: 20.5, y: 20 },
-      type: 'hopper-purple'
-    }
-  ],
-  items: [...middlePlatform]
-}
-
-export const is2 = {
-  enemies: [
-    {
-      pos: { x: 20.5, y: 20 },
-      type: 'hopper-purple'
+      pos: { x: 20, y: 21.5 },
+      dir: 'up'
     },
     {
-      pos: { x: 34.5, y: 20 },
-      type: 'hopper-purple'
+      pos: { x: 26, y: 21.5 },
+      dir: 'up',
+      delay: 50
     }
   ],
-  items: [...middlePlatform]
+  items: [
+    ...horizontalLine(0, 18, 21),
+    ...horizontalLine(21, 24, 21),
+    ...horizontalLine(27, 39, 21)
+  ]
 }
 
-export const maybe2 = {
+export const gone = {
   enemies: [
     {
       pos: { x: 20.5, y: 20 },
@@ -111,16 +108,37 @@ export const maybe2 = {
   items: [...middlePlatform]
 }
 
-export const surely2 = {
-  enemies: [
+// make on inner one outer shooting?
+export const will = {
+  autos: [
     {
-      pos: { x: 20.5, y: 20 },
-      type: 'shooter-green'
+      pos: { x: 15, y: 17.5 },
+      dir: 'up-left'
     },
     {
-      pos: { x: 34.5, y: 20 },
-      type: 'shooter-green'
+      pos: { x: 25, y: 17.5 },
+      dir: 'up-right',
+      delay: 50
     }
   ],
+  items: [...raisedMiddle]
+}
+
+export const wont = {
+  autos: [
+    {
+      pos: { x: 15, y: 17.5 },
+      dir: 'up-left'
+    },
+    {
+      pos: { x: 25, y: 17.5 },
+      dir: 'up-right',
+      delay: 50
+    }
+  ],
+  items: [...raisedMiddle]
+}
+
+export const recover = {
   items: [...middlePlatform]
 }

@@ -19,6 +19,22 @@
 		]
 	},
 	"two": {
-
+		"maps": [
+			{
+				"possibilities": ["what"]
+			},
+			{
+				"possibilities": ["will", "wont"]
+			},
+			{
+				"possibilities": ["is"]
+			},
+			{
+				"possibilities": ["gone"]
+			},
+			{
+				"possibilities": ["recover"]
+			}
+		]
 	}
 }

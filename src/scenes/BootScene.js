@@ -34,6 +34,8 @@ class BootScene extends Scene {
     this.load.image('finished-world', 'assets/images/finished-world.png')
     this.load.image('unlocked-world', 'assets/images/unlocked-world.png')
     this.load.image('locked-world', 'assets/images/locked-world.png')
+    this.load.image('auto-shooter', 'assets/images/auto-shooter.png')
+    this.load.image('auto-shooter-angle', 'assets/images/auto-shooter-angle.png')
 
     this.animsArray = ['player', 'shooter-green', 'hopper-purple', 'wand', 'ball']
   }
