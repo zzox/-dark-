@@ -1,5 +1,6 @@
 {
 	"one": {
+		"background": "blue-green",
 		"maps": [
 			{
 				"possibilities": ["the"]
@@ -19,6 +20,7 @@
 		]
 	},
 	"two": {
+		"background": "blue-green",
 		"maps": [
 			{
 				"possibilities": ["what"]
@@ -36,5 +38,33 @@
 				"possibilities": ["recover"]
 			}
 		]
+	},
+	"three": {
+		"background": "blue-green",
+		"maps": []
+	},
+	"four": {
+		"background": "green-purple",
+		"maps": []
+	},
+	"five": {
+		"background": "green-purple",
+		"maps": []
+	},
+	"six": {
+		"background": "purple-blue",
+		"maps": []
+	},
+	"seven": {
+		"background": "purple-blue",
+		"maps": []
+	},
+	"eight": {
+		"background": "blue-purple",
+		"maps": []
+	},
+	"nine": {
+		"background": "purple-blue-brown",
+		"maps": []
 	}
 }

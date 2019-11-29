@@ -5,6 +5,7 @@ import Projectile from '../gameobjects/Projectile'
 import AutoShooter from '../gameobjects/AutoShooter'
 import * as maps from '../maps'
 import HUD from '../gameobjects/HUD'
+import BackgroundGfx from '../gameobjects/BackgroundGfx'
 import { completedWorld } from '../utils/worldData'
 
 // TODO: move to consts file
@@ -36,7 +37,7 @@ class GameScene extends Scene {
 
   create () {
     this.consts()
-    const { maps } = this.worldConfig
+    const { maps, background } = this.worldConfig
 
     // ROOM STUFF
     this.roomLeft = 0
@@ -46,9 +47,11 @@ class GameScene extends Scene {
     this.movingRoom = false
     this.physics.world.setBounds(0, 0, MAP_PIXEL_WIDTH, PHYSICS_HEIGHT)
 
-    // MD:
-    this.add.image(240, 90, 'one-bg')
+
+    this.add.image(240, 90, background)
       .setScrollFactor(0.1, 0)
+
+    this.bgGfx = new BackgroundGfx({ scene: this })
 
     this.add.bitmapText(20, 20, 'font', 'we here', 72).setAlpha(0.01)
 
@@ -112,6 +115,8 @@ class GameScene extends Scene {
     if (this.player.y > ROOM_HEIGHT && this.player.alive) {
       this.player.kill()
     }
+
+    this.bgGfx.update()
 
     this.enemies.children.entries.map((enemy) => enemy.update(delta))
     this.projectiles.children.entries.map((projectile) => projectile.update(delta))

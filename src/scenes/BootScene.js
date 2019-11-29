@@ -24,18 +24,27 @@ class BootScene extends Scene {
     this.load.spritesheet('shooter-green', 'assets/images/spritesheets/walker-green.png', SIXTEEN_EXTRUDED_TILESET)
     this.load.spritesheet('wand', 'assets/images/spritesheets/wand.png', SIXTEEN_EXTRUDED_TILESET)
     this.load.spritesheet('ball', 'assets/images/spritesheets/ball.png', SIXTEEN_EXTRUDED_TILESET)
-    this.load.image('one-bg', 'assets/images/backgrounds/one-bg.png')
+
+    this.load.image('world-map', 'assets/images/backgrounds/world-map.png')
+    this.load.image('blue-green', 'assets/images/backgrounds/blue-green.png')
+    this.load.image('green-purple', 'assets/images/backgrounds/green-purple.png')
+    this.load.image('purple-blue', 'assets/images/backgrounds/purple-blue.png')
+    this.load.image('blue-purple', 'assets/images/backgrounds/blue-purple.png')
+    this.load.image('purple-blue-brown', 'assets/images/backgrounds/purple-blue-brown.png')
+
     this.load.image('bar', 'assets/images/bar.png')
     this.load.image('bar-shine', 'assets/images/bar-shine.png')
     this.load.image('door', 'assets/images/door.png')
     this.load.image('aimer', 'assets/images/aimer.png')
     this.load.image('life', 'assets/images/life.png')
-    this.load.image('world-map', 'assets/images/world-map.png')
     this.load.image('finished-world', 'assets/images/finished-world.png')
     this.load.image('unlocked-world', 'assets/images/unlocked-world.png')
     this.load.image('locked-world', 'assets/images/locked-world.png')
     this.load.image('auto-shooter', 'assets/images/auto-shooter.png')
     this.load.image('auto-shooter-angle', 'assets/images/auto-shooter-angle.png')
+
+    this.load.image('white-particle-small', 'assets/images/particles/white-particle-small.png')
+    this.load.image('white-particle-medium', 'assets/images/particles/white-particle-medium.png')
 
     this.animsArray = ['player', 'shooter-green', 'hopper-purple', 'wand', 'ball']
   }
