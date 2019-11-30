@@ -1,5 +1,7 @@
 import { GameObjects } from 'phaser'
 
+const MED_VOL = { volume: 0.3 }
+
 class Melee extends GameObjects.Sprite {
   constructor ({ scene, x, y, owner, ...config }) {
     super(scene, x, y)
@@ -72,7 +74,7 @@ class Melee extends GameObjects.Sprite {
       this.scene.physics.world.overlap(this, this.scene.projectiles, this.hitProj)
       if (!this.soundPlayed) {
         this.soundPlayed = true
-        // this.scene.sound.playAudioSprite('sfx', 'sword-swing')
+        this.scene.sound.playAudioSprite('sfx', 'player-swing', MED_VOL)
       }
     } else if (holdTime > this.swingHigh) {
       this.visible = true
@@ -184,13 +186,13 @@ class Melee extends GameObjects.Sprite {
   }
 
   cancel () {
-    this.soundPlayed = false
     this.owner.state.swinging = false
     this.owner.state.swingingTime = 0
     this.hide()
   }
 
   hide () {
+    this.soundPlayed = false
     this.visible = false
     this.x = -10
     this.y = -10

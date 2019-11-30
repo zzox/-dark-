@@ -46,6 +46,8 @@ class AutoShooter extends GameObjects.Sprite {
       name: this.projName,
       ...this.projConfig
     })
+
+    this.scene.sound.playAudioSprite('sfx', 'auto-shoot', { volume: 0.5 })
   }
 
   // TODO: REMOVE?

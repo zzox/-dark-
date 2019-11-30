@@ -63,12 +63,15 @@ class WorldScene extends Scene {
     if (this.current.forwardFlipX) {
       this.spr.flipX = true
     }
+
+    this.music = this.sound.playAudioSprite('songs', 'dark-main', { loop: true })
   }
 
   update () {
     // spagett
     if (!this.moving && !this.selected) {
       if (this.keys.start.isDown && !this.prevState.start) {
+        this.pauseMusic()
         this.scene.start('GameScene', { worldName: this.current.name })
       } else {
         if (this.current.back && this.keys[this.current.backDir].isDown &&
@@ -124,6 +127,15 @@ class WorldScene extends Scene {
 
   endMoving () {
     this.moving = false
+  }
+
+  pauseMusic () {
+    let sounds = this.sound.sounds
+    for (let i = 0; i < sounds.length; i++) {
+      if (sounds[i].key === 'songs') {
+        this.sound.sounds[i].pause()
+      }
+    }
   }
 }
 

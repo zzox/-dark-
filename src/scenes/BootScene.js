@@ -46,6 +46,32 @@ class BootScene extends Scene {
     this.load.image('white-particle-small', 'assets/images/particles/white-particle-small.png')
     this.load.image('white-particle-medium', 'assets/images/particles/white-particle-medium.png')
 
+    this.load.audioSprite('sfx', 
+      'assets/sound/dark-sfx.json',
+      [
+        'assets/sound/dark-sfx.mp3',
+        'assets/sound/dark-sfx.ac3',
+        'assets/sound/dark-sfx.m4a',
+        'assets/sound/dark-sfx.ogg',
+      ], 
+      {
+        instances: 4
+      }
+    )
+
+    this.load.audioSprite('songs', 
+      'assets/sound/dark-songs.json',
+      [
+        'assets/sound/dark-songs.mp3',
+        'assets/sound/dark-songs.ac3',
+        'assets/sound/dark-songs.m4a',
+        'assets/sound/dark-songs.ogg',
+      ], 
+      {
+        instances: 4
+      }
+    )
+
     this.animsArray = ['player', 'shooter-green', 'hopper-purple', 'wand', 'ball']
   }
 
@@ -57,7 +83,7 @@ class BootScene extends Scene {
       this.resize()
     })
 
-    this.scene.start('TitleScene')
+    this.scene.start('ClickStart')
   }
 
   createAnimations () {

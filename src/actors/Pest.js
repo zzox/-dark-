@@ -8,6 +8,10 @@ import {
 
 const CLEAR_TINT = 0xFFFFFF
 
+const LOW_VOL = { volume: 0.2 }
+const MED_VOL = { volume: 0.35 }
+const HI_VOL = { volume: 0.6 }
+
 class ShootingPest extends GameObjects.Sprite {
   constructor ({ scene, x, y, roomIndex, config }) {
     super(scene, x, y)
@@ -148,6 +152,7 @@ class ShootingPest extends GameObjects.Sprite {
       case 'attack':
         if (this.state.move === 'attack' && this.prevState.moveState !== 'attack') {
           // jump in dir
+          this.scene.sound.playAudioSprite('sfx', 'pest-jump', MED_VOL)
 
           if (this.scene.player.x < this.x) {
             this.body.setVelocity(-this.attackVelocity.x, -this.attackVelocity.y)
@@ -180,6 +185,8 @@ class ShootingPest extends GameObjects.Sprite {
             ...this.projConfig
           })
           this.state.fired = true
+
+          this.scene.sound.playAudioSprite('sfx', 'player-throw', MED_VOL)
         }
         break
       default:
@@ -187,7 +194,6 @@ class ShootingPest extends GameObjects.Sprite {
     }
   }
 
-  // TODO: make parent
   makeDecision () {
     if (this.canFire) {
       this.state.fired = false
@@ -206,13 +212,12 @@ class ShootingPest extends GameObjects.Sprite {
     this.decisionTimer = 0
   }
 
-  // TODO: make parent
   chooseDecisionTime () {
     return Math.random() * (this.maxDecisionTime - this.minDecisionTime) + this.minDecisionTime
   }
 
   hit () {
-    console.log('dead pest')
+    this.scene.sound.playAudioSprite('sfx', 'pest-dead', HI_VOL)
     this.alive = false
     this.body.allowGravity = false
     this.body.setVelocity(0, 0)
@@ -225,6 +230,7 @@ class ShootingPest extends GameObjects.Sprite {
     this.state.hurtTimer = this.state.hurtTime * hurtMutli
     this.body.setBounce(0.66, 0.66)
     this.lightness += this.lightnessInc
+    this.scene.sound.playAudioSprite('sfx', 'pest-hurt', MED_VOL)
   }
 
   activate () {

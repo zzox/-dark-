@@ -26,13 +26,13 @@
 				"possibilities": ["what"]
 			},
 			{
-				"possibilities": ["will", "wont"]
-			},
-			{
 				"possibilities": ["is"]
 			},
 			{
 				"possibilities": ["gone"]
+			},
+			{
+				"possibilities": ["will", "wont"]
 			},
 			{
 				"possibilities": ["recover"]
@@ -41,30 +41,142 @@
 	},
 	"three": {
 		"background": "blue-green",
-		"maps": []
+		"maps": [
+			{
+				"possibilities": ["why"]
+			},
+			{
+				"possibilities": ["is"]
+			},
+			{
+				"possibilities": ["it"]
+			},
+			{
+				"possibilities": ["so"]
+			},
+			{
+				"possibilities": ["hard"]
+			}
+		]
 	},
 	"four": {
 		"background": "green-purple",
-		"maps": []
+		"maps": [
+			{
+				"possibilities": ["now"]
+			},
+			{
+				"possibilities": ["is"]
+			},
+			{
+				"possibilities": ["only"]
+			},
+			{
+				"possibilities": ["the"]
+			},
+			{
+				"possibilities": ["start", "beginning"]
+			}
+		]
 	},
 	"five": {
 		"background": "green-purple",
-		"maps": []
+		"maps": [
+			{
+				"possibilities": ["now"]
+			},
+			{
+				"possibilities": ["we"]
+			},
+			{
+				"possibilities": ["can"]
+			},
+			{
+				"possibilities": ["over"]
+			},
+			{
+				"possibilities": ["come"]
+			}
+		]
 	},
 	"six": {
 		"background": "purple-blue",
-		"maps": []
+		"maps": [
+			{
+				"possibilities": ["hopefully"]
+			},
+			{
+				"possibilities": ["we"]
+			},
+			{
+				"possibilities": ["wont"]
+			},
+			{
+				"possibilities": ["perish"]
+			},
+			{
+				"possibilities": ["slow"]
+			}
+		]
 	},
 	"seven": {
 		"background": "purple-blue",
-		"maps": []
+		"maps": [
+			{
+				"possibilities": ["definitely"]
+			},
+			{
+				"possibilities": ["a"]
+			},
+			{
+				"possibilities": ["time"]
+			},
+			{
+				"possibilities": ["needing"]
+			},
+			{
+				"possibilities": ["prayer", "salvation"]
+			}
+		]
 	},
 	"eight": {
 		"background": "blue-purple",
-		"maps": []
+		"maps": [
+			{
+				"possibilities": ["hopefully"]
+			},
+			{
+				"possibilities": ["you"]
+			},
+			{
+				"possibilities": ["can"]
+			},
+			{
+				"possibilities": ["help"]
+			},
+			{
+				"possibilities": ["me"]
+			}
+		]
 	},
 	"nine": {
 		"background": "purple-blue-brown",
-		"maps": []
+		"maps": [
+			{
+				"possibilities": ["time"]
+			},
+			{
+				"possibilities": ["is"]
+			},
+			{
+				"possibilities": ["up"]
+			},
+			{
+				"possibilities": ["run"]
+			},
+			{
+				"possibilities": ["fast"]
+			}
+		]
 	}
 }

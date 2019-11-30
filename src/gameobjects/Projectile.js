@@ -1,6 +1,9 @@
 import { GameObjects } from 'phaser'
 
 const MIN_EXPLODE_TIME = 120
+const LOW_VOL = { volume: 0.2 }
+const MED_VOL = { volume: 0.35 }
+const HI_VOL = { volume: 0.6 }
 
 class Projectile extends GameObjects.Sprite {
   constructor (scene) {
@@ -181,37 +184,11 @@ class Projectile extends GameObjects.Sprite {
 
   explode () {
     this.exploded = true
-
-    if (this.spawnChildren) {
-      this.spawnChildrens()
-      this.disappear()
-    }
-
     this.anims.play(`${this.name}-explode`, true)
     this.body.setVelocity(0, 0)
     this.body.allowGravity = false
     this.hit = true
-  }
-
-  // TODO: remove this?
-  spawnChildrens () {
-    if (this.childrenPattern === 'plus') {
-      this.plusPattern('sparkle').map(item => {
-        const proj = this.scene.projectiles.get()
-        proj.fire(item)
-      })
-    }
-  }
-
-  // and this
-  plusPattern (name) {
-    const details = this.scene.weaponsConfig[name]
-    return [
-      { ...details, name, x: this.x, y: this.y, fromActor: this.fromActor, velocityX: 0, velocityY: 300 },
-      { ...details, name, x: this.x, y: this.y, fromActor: this.fromActor, velocityX: 0, velocityY: -300 },
-      { ...details, name, x: this.x, y: this.y, fromActor: this.fromActor, velocityX: 300, velocityY: 0 },
-      { ...details, name, x: this.x, y: this.y, fromActor: this.fromActor, velocityX: -300, velocityY: 0 }
-    ]
+    this.scene.sound.playAudioSprite('sfx', 'proj-explode', MED_VOL)
   }
 }
 

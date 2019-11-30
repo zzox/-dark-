@@ -51,7 +51,6 @@ class GameScene extends Scene {
     this.add.image(240, 90, background)
       .setScrollFactor(0.1, 0)
 
-    // TODO: enable
     this.bgGfx = new BackgroundGfx({ scene: this })
 
     this.add.bitmapText(20, 20, 'font', 'we here', 72).setAlpha(0.01)
@@ -104,6 +103,8 @@ class GameScene extends Scene {
 
     this.gameOverTimer = 0
     this.gameIsOver = false
+
+    this.music = this.sound.playAudioSprite('songs', 'dark-one', { loop: true })
   }
 
   update (time, delta) {
@@ -117,7 +118,6 @@ class GameScene extends Scene {
       this.player.kill()
     }
 
-    // TODO: enable
     this.bgGfx.update()
 
     this.enemies.children.entries.map((enemy) => enemy.update(delta))
@@ -126,13 +126,18 @@ class GameScene extends Scene {
 
     if (this.gameIsOver) {
       if (!this.gameOverTimer) {
+        if (this.worldWon) {
+          this.sound.playAudioSprite('sfx', 'door', { volume: 0.5 })
+        }
         this.cameras.main.fadeOut(GAME_OVER_TIME)
       }
 
       if (this.gameOverTimer > GAME_OVER_TIME) {
+        this.pauseMusic()
         if (this.worldWon) {
           this.scene.start('WorldScene', { completedWorld: this.worldName })
         } else {
+          this.sound.playAudioSprite('sfx', 'game-over', { volume: 0.5 })
           this.scene.start('GameOver', { fromWorld: this.worldName })
         }
       } else {
@@ -281,6 +286,15 @@ class GameScene extends Scene {
 
   gameOver () {
     this.gameIsOver = true
+  }
+
+  pauseMusic () {
+    let sounds = this.sound.sounds
+    for (let i = 0; i < sounds.length; i++) {
+      if (sounds[i].key === 'songs') {
+        this.sound.sounds[i].pause()
+      }
+    }
   }
 }
 

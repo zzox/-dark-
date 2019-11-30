@@ -6,13 +6,14 @@ class ClickStart extends Scene {
   }
 
   create () {
-    this.add.bitmapText(20, 20, 'font', 'click screen to enable keyboard and audio')
+    this.add.bitmapText(8, 4, 'font', 'click screen to enable keyboard and audio', 16)
 
     this.start = false
+
+    this.cameras.main.setBackgroundColor('#343434')
   }
 
   update () {
-    // prevent switching problems, maybe not needed
     if (this.start) {
       return
     }

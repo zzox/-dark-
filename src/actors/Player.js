@@ -10,6 +10,9 @@ import {
 const MAX_DEGREE = 90
 const MAX_AIMER_DISTANCE = 12
 const AIMER_INC = 2
+const LOW_VOL = { volume: 0.2 }
+const MED_VOL = { volume: 0.35 }
+const HI_VOL = { volume: 0.6 }
 
 class Player extends GameObjects.Sprite {
   constructor ({ scene, x, y, lives }) {
@@ -38,9 +41,7 @@ class Player extends GameObjects.Sprite {
 
     this.animation = 'stand'
 
-    // TODO: Remove Dynamics
     this.meleeName = 'wand'
-    // this.meleeConfig = this.scene.cache.json.entries.entries.melees[this.meleeName]
     this.melee = new Melee({
       owner: this,
       scene: this.scene,
@@ -237,6 +238,10 @@ class Player extends GameObjects.Sprite {
         this.jumpTime = 0
         this.jumps = 0
         this.jumping = false
+
+        if (!this.prevState.blockedDown) {
+          this.scene.sound.playAudioSprite('sfx', 'player-land', LOW_VOL)
+        }
       }
 
       if (!this.state.shooting && !this.state.postShooting &&
@@ -252,6 +257,11 @@ class Player extends GameObjects.Sprite {
           if (input.jump && !this.prevState.jump) {
             this.body.setVelocityY(-this.jumpVelocity)
             this.jumping = true
+            if (this.jumps === 0) {
+              this.scene.sound.playAudioSprite('sfx', 'player-jump', MED_VOL)
+            } else {
+              this.scene.sound.playAudioSprite('sfx', 'player-double-jump', MED_VOL)
+            }
             this.jumps++
           } else {
             this.body.setVelocityY(-this.jumpVelocity / 1.5)
@@ -321,7 +331,6 @@ class Player extends GameObjects.Sprite {
     }
 
     if (this.state.shooting) {
-      // BUG: here?  what if something sneaks through here
       if (input.shoot && this.state.shootingTime < this.projConfig.maxHoldTime) {
         this.scene.hud.updateLoader({
           shootVal: this.state.shootingTime / this.projConfig.maxHoldTime,
@@ -367,6 +376,8 @@ class Player extends GameObjects.Sprite {
         this.state.postShootingTimer = this.projConfig.fireTime
         this.state.shootRefreshing = true
         this.state.shootRefreshTimer = this.state.shootRefreshTime
+
+        this.scene.sound.playAudioSprite('sfx', 'player-throw', HI_VOL)
 
         this.scene.hud.updateLoader({ reloadVal: 0, shootVal: 0 })
       }
@@ -487,6 +498,7 @@ class Player extends GameObjects.Sprite {
   shoot () {
     if (!this.state.swinging && !this.state.shooting && !this.state.postShooting) {
       this.state.shooting = true
+      this.scene.sound.playAudioSprite('sfx', 'player-hold', LOW_VOL)
     }
   }
 
@@ -509,6 +521,8 @@ class Player extends GameObjects.Sprite {
     if (this.lives === 0) {
       this.scene.gameOver()
     }
+
+    this.scene.sound.playAudioSprite('sfx', 'player-hurt', HI_VOL)
   }
 
   hit () {

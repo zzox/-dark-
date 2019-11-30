@@ -24,7 +24,6 @@ class TitleScene extends Scene {
       this.menuPositions = 1
     }
 
-    // pass finished worlds to createMaster
     createMaster(continuedGame ? continuedGame.finished : [])
 
     this.spr = this.add.sprite(130, 140, 'life')
@@ -41,7 +40,7 @@ class TitleScene extends Scene {
 
     this.cameras.main.fadeIn(2000)
 
-    // this.music = this.sound.playAudioSprite('soundtrack', 'intro', { loop: true })
+    this.music = this.sound.playAudioSprite('songs', 'dark-two', { loop: true })
   }
 
   update () {
@@ -50,6 +49,7 @@ class TitleScene extends Scene {
       this.newGame()
       return
     } else if (this.startKey.isDown && !this.prevState.startKey && this.menuPos === 2) {
+      this.pauseMusic()
       this.loadGame()
     }
 
@@ -89,17 +89,11 @@ class TitleScene extends Scene {
   pauseMusic () {
     let sounds = this.sound.sounds
     for (let i = 0; i < sounds.length; i++) {
-      if (sounds[i].key === 'soundtrack') {
+      if (sounds[i].key === 'songs') {
         this.sound.sounds[i].pause()
       }
     }
   }
-
-  // clearKeys () {
-  //   this.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
-  //   this.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.W)
-  //   this.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.S)
-  // }
 }
 
 export default TitleScene

@@ -87,7 +87,7 @@
 		},
 		{
 			"name": "nine",
-			"x": 293,
+			"x": 285,
 			"y": 154,
 			"backFlipX": false,
 			"backDir": "left",
