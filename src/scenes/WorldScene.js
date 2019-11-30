@@ -59,6 +59,10 @@ class WorldScene extends Scene {
       left: true,
       right: true
     }
+
+    if (this.current.forwardFlipX) {
+      this.spr.flipX = true
+    }
   }
 
   update () {

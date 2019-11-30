@@ -18,7 +18,7 @@ const ROOM_EDGE = 8
 const ROOM_HEIGHT = 200
 // so we collide in all sides besides the bottom.
 const PHYSICS_HEIGHT = 500
-const STARTING_LIVES = 3
+const STARTING_LIVES = 10
 const GAME_OVER_TIME = 666
 
 class GameScene extends Scene {
@@ -51,6 +51,7 @@ class GameScene extends Scene {
     this.add.image(240, 90, background)
       .setScrollFactor(0.1, 0)
 
+    // TODO: enable
     this.bgGfx = new BackgroundGfx({ scene: this })
 
     this.add.bitmapText(20, 20, 'font', 'we here', 72).setAlpha(0.01)
@@ -116,6 +117,7 @@ class GameScene extends Scene {
       this.player.kill()
     }
 
+    // TODO: enable
     this.bgGfx.update()
 
     this.enemies.children.entries.map((enemy) => enemy.update(delta))

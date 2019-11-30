@@ -19,7 +19,7 @@ class Projectile extends GameObjects.Sprite {
     this.aliveTime = 0
     this.aliveTimer = 3000
     this.hitTime = 0
-    this.hitTimer = 500
+    this.hitTimer = 333
 
     this.direction = 'left'
     this.prevState = {

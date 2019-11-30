@@ -63,6 +63,15 @@ class AutoShooter extends GameObjects.Sprite {
         this.xVel = 0
         this.yVel = -500
         break
+      case 'down':
+        this.body.setSize(16, 8)
+        this.body.setOffset(0, 8)
+        this.xFirePos = this.x
+        this.yFirePos = this.y + 8
+        this.flipY = true
+        this.xVel = 0
+        this.yVel = 500
+        break
       case 'up-left':
         this.body.setSize(8, 8)
         this.body.setOffset(8, 8)
@@ -80,6 +89,26 @@ class AutoShooter extends GameObjects.Sprite {
         this.xVel = 333
         this.yVel = -333
         this.flipX = true
+        break
+      case 'down-left':
+        this.body.setSize(8, 8)
+        this.body.setOffset(8, 8)
+        this.xFirePos = this.x - 8
+        this.yFirePos = this.y - 8
+        this.xVel = 333
+        this.yVel = 333
+        this.flipY = true
+        break
+      case 'down-right':
+        this.x = this.x + 8
+        this.body.setSize(8, 8)
+        this.body.setOffset(0, 8)
+        this.xFirePos = this.x + 8
+        this.yFirePos = this.y - 8
+        this.xVel = -333
+        this.yVel = 333
+        this.flipX = true
+        this.flipY = true
         break
       default:
         break
