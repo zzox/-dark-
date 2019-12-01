@@ -1,4 +1,5 @@
 import { Scene, Input } from 'phaser'
+import BackgroundGfx from '../gameobjects/BackgroundGfx'
 
 class GameOver extends Scene {
   constructor () {
@@ -11,8 +12,9 @@ class GameOver extends Scene {
 
   create () {
     const { ENTER, UP, DOWN } = Input.Keyboard.KeyCodes
-    // this.add.image(240, 80, 'static-title')
     this.cameras.main.setBackgroundColor('#0d2030')
+
+    this.bgGfx = new BackgroundGfx({ scene: this })
 
     this.add.bitmapText(146, 85, 'font', 'Try Again', 16)
 
@@ -70,6 +72,8 @@ class GameOver extends Scene {
       upKey: this.upKey.isDown,
       downKey: this.downKey.isDown
     }
+
+    this.bgGfx.update()
   }
 
   continue () {

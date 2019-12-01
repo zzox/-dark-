@@ -168,8 +168,6 @@ class Melee extends GameObjects.Sprite {
         yVel = proj.body.velocity.y * -1
       }
 
-      console.log(xVel * hurtMulti, yVel * hurtMulti)
-
       proj.body.setVelocity(xVel * hurtMulti, yVel * hurtMulti)
     }
 

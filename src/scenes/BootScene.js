@@ -24,6 +24,7 @@ class BootScene extends Scene {
     this.load.spritesheet('shooter-green', 'assets/images/spritesheets/walker-green.png', SIXTEEN_EXTRUDED_TILESET)
     this.load.spritesheet('wand', 'assets/images/spritesheets/wand.png', SIXTEEN_EXTRUDED_TILESET)
     this.load.spritesheet('ball', 'assets/images/spritesheets/ball.png', SIXTEEN_EXTRUDED_TILESET)
+    this.load.spritesheet('title', 'assets/images/spritesheets/title.png', { frameWidth: 128, frameHeight: 32, spacing: 2, margin: 1 })
 
     this.load.image('world-map', 'assets/images/backgrounds/world-map.png')
     this.load.image('blue-green', 'assets/images/backgrounds/blue-green.png')
@@ -72,7 +73,7 @@ class BootScene extends Scene {
       }
     )
 
-    this.animsArray = ['player', 'shooter-green', 'hopper-purple', 'wand', 'ball']
+    this.animsArray = ['player', 'shooter-green', 'hopper-purple', 'wand', 'ball', 'title']
   }
 
   create () {
@@ -83,7 +84,7 @@ class BootScene extends Scene {
       this.resize()
     })
 
-    this.scene.start('ClickStart')
+    this.scene.start('TitleScene')
   }
 
   createAnimations () {

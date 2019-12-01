@@ -1,6 +1,7 @@
 import { Scene, Input } from 'phaser'
 import { createMaster } from '../utils/worldData'
 import store from 'store'
+import BackgroundGfx from '../gameobjects/BackgroundGfx'
 
 class TitleScene extends Scene {
   constructor () {
@@ -11,6 +12,8 @@ class TitleScene extends Scene {
     const { ENTER, UP, DOWN } = Input.Keyboard.KeyCodes
     // this.add.image(240, 80, 'static-title')
     this.cameras.main.setBackgroundColor('#0d2030')
+
+    this.bgGfx = new BackgroundGfx({ scene: this })
 
     this.add.bitmapText(146, 135, 'font', 'New Game', 16)
 
@@ -41,6 +44,10 @@ class TitleScene extends Scene {
     this.cameras.main.fadeIn(2000)
 
     this.music = this.sound.playAudioSprite('songs', 'dark-two', { loop: true })
+
+    this.title = this.add.sprite(180, 64)
+    this.title.play('title-flash')
+    this.title.setScale(2)
   }
 
   update () {
@@ -76,6 +83,8 @@ class TitleScene extends Scene {
       upKey: this.upKey.isDown,
       downKey: this.downKey.isDown
     }
+
+    this.bgGfx.update()
   }
 
   newGame () {

@@ -503,7 +503,6 @@ class Player extends GameObjects.Sprite {
   }
 
   kill () {
-    console.log('i\'m dead')
     this.alive = false
     this.body.allowGravity = false
     this.body.setVelocity(0, 0)

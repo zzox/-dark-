@@ -1,5 +1,6 @@
 import { Scene, Input } from 'phaser'
 import { getWorlds } from '../utils/worldData'
+import BackgroundGfx from '../gameobjects/BackgroundGfx'
 
 class WorldScene extends Scene {
   constructor () {
@@ -19,7 +20,9 @@ class WorldScene extends Scene {
       right: this.input.keyboard.addKey(RIGHT)
     }
 
-    this.add.image(180, 90, 'world-map')
+    this.add.image(160, 90, 'world-map')
+
+    this.bgGfx = new BackgroundGfx({ scene: this })
 
     this.overworld = this.cache.json.entries.entries.overworld
     this.worldDict = {}
@@ -30,14 +33,14 @@ class WorldScene extends Scene {
 
       if (finished.includes(item.name)) {
         lastUnlocked = true
-        this.add.image(item.x + 24, item.y, 'finished-world')
+        this.add.image(item.x + 4, item.y, 'finished-world')
       } else {
         if (lastUnlocked) {
-          this.add.image(item.x + 24, item.y, 'unlocked-world')
+          this.add.image(item.x + 4, item.y, 'unlocked-world')
           this.current = item
         } else {
           item.locked = true
-          this.add.image(item.x + 24, item.y, 'locked-world')
+          this.add.image(item.x + 4, item.y, 'locked-world')
         }
 
         lastUnlocked = false
@@ -46,10 +49,14 @@ class WorldScene extends Scene {
       this.worldDict[item.name] = item
     }
 
+    if (finished.includes('nine')) {
+      this.current = this.worldDict['nine']
+    }
+
     this.moving = false
     this.selected = false
 
-    this.spr = this.add.sprite(this.current.x + 24, this.current.y - 8)
+    this.spr = this.add.sprite(this.current.x + 4, this.current.y - 8)
     this.spr.play('player-stand')
 
     this.prevState = {
@@ -101,6 +108,8 @@ class WorldScene extends Scene {
       left: this.keys.left.isDown,
       right: this.keys.right.isDown
     }
+
+    this.bgGfx.update()
   }
 
   move (to, flipX) {
@@ -112,7 +121,7 @@ class WorldScene extends Scene {
 
       this.tweens.add({
         targets: this.spr,
-        x: { from: this.spr.x, to: toItem.x + 24 },
+        x: { from: this.spr.x, to: toItem.x + 4 },
         y: { from: this.spr.y, to: toItem.y - 8 },
         ease: 'Linear',
         duration: 750,

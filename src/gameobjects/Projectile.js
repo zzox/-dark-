@@ -188,7 +188,7 @@ class Projectile extends GameObjects.Sprite {
     this.body.setVelocity(0, 0)
     this.body.allowGravity = false
     this.hit = true
-    this.scene.sound.playAudioSprite('sfx', 'proj-explode', MED_VOL)
+    this.scene.sound.playAudioSprite('sfx', 'proj-explode', HI_VOL)
   }
 }
 
