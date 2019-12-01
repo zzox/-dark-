@@ -36,8 +36,6 @@ class GameOver extends Scene {
     this.downKey = this.input.keyboard.addKey(DOWN)
 
     this.cameras.main.fadeIn(2000)
-
-    // this.music = this.sound.playAudioSprite('soundtrack', 'intro', { loop: true })
   }
 
   update () {
@@ -77,7 +75,6 @@ class GameOver extends Scene {
   }
 
   continue () {
-    // this.clearKeys()
     this.scene.start('GameScene', { worldName: this.fromWorld })
   }
 
@@ -93,12 +90,6 @@ class GameOver extends Scene {
       }
     }
   }
-
-  // clearKeys () {
-  //   this.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
-  //   this.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.W)
-  //   this.input.keyboard.removeKey(Phaser.Input.Keyboard.KeyCodes.S)
-  // }
 }
 
 export default GameOver

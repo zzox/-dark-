@@ -3,7 +3,7 @@ import { GameObjects } from 'phaser'
 const MIN_EXPLODE_TIME = 120
 const LOW_VOL = { volume: 0.2 }
 const MED_VOL = { volume: 0.35 }
-const HI_VOL = { volume: 0.6 }
+const HI_VOL = { volume: 0.75 }
 
 class Projectile extends GameObjects.Sprite {
   constructor (scene) {
@@ -41,6 +41,7 @@ class Projectile extends GameObjects.Sprite {
     canFlipY,
     missGround,
     explodeGround,
+    fromActor,
     damage,
     blowback,
     fadeOut,
@@ -62,6 +63,7 @@ class Projectile extends GameObjects.Sprite {
     this.direction = dir
     this.damage = damage
     this.blowback = blowback
+    this.fromActor = fromActor
     this.explodeGround = explodeGround
     this.spawnChildren = spawnChildren
     this.childrenPattern = childrenPattern
@@ -104,7 +106,7 @@ class Projectile extends GameObjects.Sprite {
       this.scene.physics.world.collide(this, this.scene.autos, this.hitGround.bind(this))
     }
 
-    if (this.explodeTime > MIN_EXPLODE_TIME) {
+    if (this.explodeTime > MIN_EXPLODE_TIME || (this.fromActor !== 'player' && this.fromActor !== 'pest')) {
       this.scene.physics.world.overlap(this, this.scene.enemies, this.hitEnemy.bind(this))
       if (!this.scene.player.state.hurt && !this.scene.player.state.resurrecting) {
         this.scene.physics.world.overlap(this, this.scene.player, this.hitEnemy.bind(this))

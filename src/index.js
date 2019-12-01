@@ -5,6 +5,7 @@ import GameScene from './scenes/GameScene'
 import TitleScene from './scenes/TitleScene'
 import WorldScene from './scenes/WorldScene'
 import GameOver from './scenes/GameOver'
+import Complete from './scenes/Complete'
 
 const config = {
   type: WEBGL,
@@ -27,7 +28,8 @@ const config = {
     ClickStart,
     GameScene,
     WorldScene,
-    GameOver
+    GameOver,
+    Complete
   ]
 }
 

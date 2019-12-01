@@ -4,7 +4,7 @@ const horizontalLine = (fromX, toX, y) => {
   const items = []
 
   for (let i = fromX; i <= toX; i++) {
-    items.push({ x: i, y })
+    items.push({ x: i, y, type: 'horizontal' })
   }
 
   return items
@@ -14,7 +14,7 @@ const verticalLine = (fromY, toY, x) => {
   const items = []
 
   for (let i = fromY; i <= toY; i++) {
-    items.push({ x, y: i })
+    items.push({ x, y: i, type: 'vertical' })
   }
 
   return items
@@ -676,7 +676,15 @@ export const me = {
 export const up = {
   enemies: [
     {
-      pos: { x: 16, y: 12 },
+      pos: { x: 7.5, y: 17 },
+      type: 'shooter-green'
+    },
+    {
+      pos: { x: 16.5, y: 12 },
+      type: 'shooter-green'
+    },
+    {
+      pos: { x: 24.5, y: 8 },
       type: 'shooter-green'
     },
     {
@@ -738,5 +746,52 @@ export const run = {
 }
 
 export const fast = {
+  autos: [
+    {
+      pos: { x: 6, y: -1 },
+      dir: 'down',
+      delay: 100
+    },
+    {
+      pos: { x: 9, y: -1 },
+      dir: 'down',
+      delay: 200
+    },
+    {
+      pos: { x: 12, y: -1 },
+      dir: 'down',
+      delay: 300
+    },
+    {
+      pos: { x: 15, y: -1 },
+      dir: 'down',
+      delay: 400
+    },
+    {
+      pos: { x: 18, y: -1 },
+      dir: 'down',
+      delay: 500
+    },
+    {
+      pos: { x: 21, y: -1 },
+      dir: 'down',
+      delay: 600
+    },
+    {
+      pos: { x: 24, y: -1 },
+      dir: 'down',
+      delay: 700
+    },
+    {
+      pos: { x: 27, y: -1 },
+      dir: 'down',
+      delay: 800
+    },
+    {
+      pos: { x: 30, y: -1 },
+      dir: 'down',
+      delay: 900
+    }
+  ],
   items: [...room]
 }

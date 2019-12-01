@@ -15,13 +15,13 @@ class TitleScene extends Scene {
 
     this.bgGfx = new BackgroundGfx({ scene: this })
 
-    this.add.bitmapText(146, 135, 'font', 'New Game', 16)
+    this.add.bitmapText(138, 135, 'font', 'New Game', 16)
 
     this.menuPos = 1
 
     const continuedGame = store.get('dark-session')
     if (continuedGame) {
-      this.add.bitmapText(146, 155, 'font', 'Continue', 16)
+      this.add.bitmapText(138, 155, 'font', 'Continue', 16)
       this.menuPositions = 2
     } else {
       this.menuPositions = 1
@@ -29,7 +29,7 @@ class TitleScene extends Scene {
 
     createMaster(continuedGame ? continuedGame.finished : [])
 
-    this.spr = this.add.sprite(130, 140, 'life')
+    this.spr = this.add.sprite(122, 140, 'life')
 
     this.prevState = {
       startKey: true,
@@ -45,7 +45,7 @@ class TitleScene extends Scene {
 
     this.music = this.sound.playAudioSprite('songs', 'dark-two', { loop: true })
 
-    this.title = this.add.sprite(180, 64)
+    this.title = this.add.sprite(160, 64)
     this.title.play('title-flash')
     this.title.setScale(2)
   }
@@ -88,6 +88,7 @@ class TitleScene extends Scene {
   }
 
   newGame () {
+    store.remove('dark-session')
     this.scene.start('GameScene', { worldName: 'one' })
   }
 

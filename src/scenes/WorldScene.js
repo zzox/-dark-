@@ -71,7 +71,7 @@ class WorldScene extends Scene {
       this.spr.flipX = true
     }
 
-    this.music = this.sound.playAudioSprite('songs', 'dark-main', { loop: true })
+    this.music = this.sound.playAudioSprite('songs', 'dark-main', { loop: true, volume: 0.85 })
   }
 
   update () {

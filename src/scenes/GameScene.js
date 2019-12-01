@@ -18,7 +18,7 @@ const ROOM_EDGE = 8
 const ROOM_HEIGHT = 200
 // so we collide in all sides besides the bottom.
 const PHYSICS_HEIGHT = 500
-const STARTING_LIVES = 10
+const STARTING_LIVES = 5
 const GAME_OVER_TIME = 666
 
 class GameScene extends Scene {
@@ -47,13 +47,10 @@ class GameScene extends Scene {
     this.movingRoom = false
     this.physics.world.setBounds(0, 0, MAP_PIXEL_WIDTH, PHYSICS_HEIGHT)
 
-
     this.add.image(240, 90, background)
       .setScrollFactor(0.1, 0)
 
     this.bgGfx = new BackgroundGfx({ scene: this })
-
-    this.add.bitmapText(20, 20, 'font', 'we here', 72).setAlpha(0.01)
 
     const map = this.make.tilemap({ width: this.totalRooms * MAP_TILE_WIDTH, height: 22, tileWidth: 8, tileHeight: 8 })
     map.addTilesetImage('tiles', null, 8, 8)
@@ -103,6 +100,7 @@ class GameScene extends Scene {
 
     this.gameOverTimer = 0
     this.gameIsOver = false
+    this.worldWon = false
 
     this.music = this.sound.playAudioSprite('songs', 'dark-one', { loop: true })
   }
@@ -135,7 +133,11 @@ class GameScene extends Scene {
       if (this.gameOverTimer > GAME_OVER_TIME) {
         this.pauseMusic()
         if (this.worldWon) {
-          this.scene.start('WorldScene', { completedWorld: this.worldName })
+          if (this.worldName === 'nine') {
+            this.scene.start('Complete')
+          } else {
+            this.scene.start('WorldScene', { completedWorld: this.worldName })
+          }
         } else {
           this.sound.playAudioSprite('sfx', 'game-over', { volume: 0.5 })
           this.scene.start('GameOver', { fromWorld: this.worldName })
@@ -212,15 +214,29 @@ class GameScene extends Scene {
     this.worldConfig.maps.map((item, i) => {
       const selected = Math.floor(Math.random() * item.possibilities.length)
 
-      this.makeMap(maps[item.possibilities[selected]], i)
+      this.makeMap(maps[item.possibilities[selected]], i, item.possibilities[selected])
     })
   }
 
-  makeMap (room, index) {
+  makeMap (room, index, name) {
     const { items, enemies, autos } = room
 
     const xDifferential = index * MAP_TILE_WIDTH
-    items.map(item => this.groundLayer.putTileAt(0, item.x + xDifferential, item.y))
+    items.map(item =>
+      this.groundLayer.putTileAt(
+        item.type === 'horizontal' ? 0 : 1,
+        item.x + xDifferential,
+        item.y
+      )
+    )
+
+    this.add.bitmapText(
+      Math.floor(Math.random() * 100) + xDifferential * 8,
+      Math.floor(Math.random() * 80),
+      'font',
+      name,
+      128
+    ).setAlpha(0.01)
 
     if (enemies) {
       enemies.map((enemy) => {

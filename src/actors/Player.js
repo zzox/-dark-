@@ -524,6 +524,11 @@ class Player extends GameObjects.Sprite {
     this.scene.sound.playAudioSprite('sfx', 'player-hurt', HI_VOL)
   }
 
+  killedPest () {
+    this.lives++
+    this.scene.hud.updateLives(this.lives)
+  }
+
   hit () {
     // from projectile
     this.kill()

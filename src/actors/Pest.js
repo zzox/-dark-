@@ -181,7 +181,7 @@ class ShootingPest extends GameObjects.Sprite {
             yVel: this.fireVel.y,
             dir: this.scene.player.x < this.x ? 'left' : 'right',
             name: this.projName,
-            fromActor: this.name,
+            fromActor: 'pest',
             ...this.projConfig
           })
           this.state.fired = true
@@ -223,6 +223,7 @@ class ShootingPest extends GameObjects.Sprite {
     this.body.setVelocity(0, 0)
     this.anims.pause()
     this.state.deadTimer = this.state.deadTime
+    this.scene.player.killedPest()
   }
 
   hurt (hurtMutli = 1) {
